@@ -1,6 +1,6 @@
-import Gallery from '../components/Gallery.jsx';
-import { getMinis } from '../lib/data.js';
+import Entrance from '../components/Entrance.jsx';
+import { getEntranceMinis, getRooms } from '../lib/data.js';
 
 export default function HomePage() {
-  return <Gallery minis={getMinis()} />;
+  return <Entrance entranceMinis={getEntranceMinis()} rooms={getRooms()} />;
 }

@@ -11,7 +11,8 @@ export default function Header() {
         🏛️ Runar Museum
       </Link>
       <nav>
-        <Link href="/">{t('nav_gallery')}</Link>
+        <Link href="/">{t('nav_entrance')}</Link>
+        <Link href="/all/">{t('view_all')}</Link>
         <Link href="/commissions/">{t('nav_commissions')}</Link>
         <Link href="/about/">{t('nav_about')}</Link>
         <button

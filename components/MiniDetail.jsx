@@ -55,7 +55,7 @@ export default function MiniDetail({ mini }) {
         case 'Enter':
           if (buttonFocus === 'back') {
             e.preventDefault();
-            router.push('/');
+            router.push('/all/');
           } else if (buttonFocus === 'commission') {
             e.preventDefault();
             window.open(CONTACT_URL, '_blank', 'noopener');
@@ -82,7 +82,7 @@ export default function MiniDetail({ mini }) {
 
   return (
     <article className="mini-detail">
-      <Link href="/" className={buttonFocus === 'back' ? 'back-link key-focused' : 'back-link'}>
+      <Link href="/all/" className={buttonFocus === 'back' ? 'back-link key-focused' : 'back-link'}>
         {t('back_to_gallery')}
       </Link>
       <p className="keys-hint">{t('detail_hint')}</p>

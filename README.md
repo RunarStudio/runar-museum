@@ -15,6 +15,14 @@ Notion "🏛️ Miniatures Museum" DB ──(nightly GitHub Action)──▶ con
 - The sync runs **nightly** and on the **Run workflow** button
   (Actions → "Sync from Notion & Deploy" → Run workflow).
 
+## How the museum is organized
+
+- **Entrance** (`/`): minis tagged `Room / Wing = Entrance` are the landing showcase
+  (falls back to the newest 5 if none are tagged). Room doors appear below it.
+- **Rooms** (`/rooms/<room>/`): every `Room / Wing` value used by a published mini
+  becomes a room automatically — swipe (mobile) or arrow keys (desktop) to browse.
+- **View all** (`/all/`): the classic filterable grid with search.
+
 ## Updating the museum
 
 Edit the Notion database — that's it. Add photos to *Cover image* / *Process images*,
