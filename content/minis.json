@@ -1,0 +1,53 @@
+[
+  {
+    "id": "3999d707-fb3c-81bb-892c-cdc59bad5365",
+    "slug": "sample-plague-marine",
+    "name": "SAMPLE — Death Guard Plague Marine",
+    "warband": "Death Guard",
+    "game": "Warhammer 40k",
+    "topics": ["Infantry"],
+    "techniques": ["Wet blending", "Glazing"],
+    "room": "40k Wing",
+    "datePainted": "2026-05-01",
+    "forSale": true,
+    "price": 45,
+    "notes": "Sample entry to test the website pipeline. Add a photo to 'Cover image', or delete this row once real entries exist.",
+    "cover": null,
+    "thumb": null,
+    "process": []
+  },
+  {
+    "id": "3999d707-fb3c-8134-80b2-d799393aa5c6",
+    "slug": "sample-ork-nob",
+    "name": "SAMPLE — Ork Nob with Big Choppa",
+    "warband": "Orks",
+    "game": "Warhammer 40k",
+    "topics": ["Hero"],
+    "techniques": ["Drybrush", "OSL"],
+    "room": "40k Wing",
+    "datePainted": "2026-03-14",
+    "forSale": false,
+    "price": null,
+    "notes": "Sample entry to test the website pipeline. Not for sale — portfolio piece.",
+    "cover": null,
+    "thumb": null,
+    "process": []
+  },
+  {
+    "id": "3999d707-fb3c-81e1-a386-e7b1aecda0dd",
+    "slug": "sample-dragon-wip",
+    "name": "SAMPLE — Young Dragon (WIP)",
+    "warband": "Other",
+    "game": "D&D / RPG",
+    "topics": ["Monster"],
+    "techniques": ["Airbrush"],
+    "room": "WIP Lab",
+    "datePainted": null,
+    "forSale": false,
+    "price": null,
+    "notes": "Sample work-in-progress entry to test the WIP Lab section.",
+    "cover": null,
+    "thumb": null,
+    "process": []
+  }
+]

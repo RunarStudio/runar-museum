@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#1e1b16"/>
+  <g fill="none" stroke="#353026" stroke-width="6">
+    <rect x="120" y="120" width="560" height="560" rx="16"/>
+  </g>
+  <g fill="#544b3a">
+    <ellipse cx="400" cy="560" rx="120" ry="26"/>
+    <path d="M340 560 Q340 420 380 380 Q360 340 400 300 Q440 340 420 380 Q460 420 460 560 Z"/>
+  </g>
+  <text x="400" y="680" font-family="Georgia, serif" font-size="30" fill="#a89f8d" text-anchor="middle">Photo coming soon</text>
+</svg>
