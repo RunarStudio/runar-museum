@@ -5,8 +5,13 @@
     "name": "SAMPLE — Death Guard Plague Marine",
     "warband": "Death Guard",
     "game": "Warhammer 40k",
-    "topics": ["Infantry"],
-    "techniques": ["Wet blending", "Glazing"],
+    "topics": [
+      "Infantry"
+    ],
+    "techniques": [
+      "Wet blending",
+      "Glazing"
+    ],
     "room": "40k Wing",
     "datePainted": "2026-05-01",
     "forSale": true,
@@ -22,8 +27,13 @@
     "name": "SAMPLE — Ork Nob with Big Choppa",
     "warband": "Orks",
     "game": "Warhammer 40k",
-    "topics": ["Hero"],
-    "techniques": ["Drybrush", "OSL"],
+    "topics": [
+      "Hero"
+    ],
+    "techniques": [
+      "Drybrush",
+      "OSL"
+    ],
     "room": "40k Wing",
     "datePainted": "2026-03-14",
     "forSale": false,
@@ -39,8 +49,12 @@
     "name": "SAMPLE — Young Dragon (WIP)",
     "warband": "Other",
     "game": "D&D / RPG",
-    "topics": ["Monster"],
-    "techniques": ["Airbrush"],
+    "topics": [
+      "Monster"
+    ],
+    "techniques": [
+      "Airbrush"
+    ],
     "room": "WIP Lab",
     "datePainted": null,
     "forSale": false,
