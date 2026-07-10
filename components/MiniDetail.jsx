@@ -12,16 +12,56 @@ export default function MiniDetail({ mini }) {
   const router = useRouter();
   const [escArmed, setEscArmed] = useState(false); // first Esc pressed, waiting for second
   const escTimer = useRef(null);
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [buttonFocus, setButtonFocus] = useState(null); // null | 'back' | 'commission'
+
+  // All showcase media: cover first, then any images from the Notion page body
+  const media = mini ? [mini.cover, ...(mini.gallery ?? [])].filter(Boolean) : [];
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key !== 'Escape' || e.target.closest('input, textarea, select')) return;
-      if (escArmed) {
-        router.push('/');
-      } else {
-        setEscArmed(true);
-        clearTimeout(escTimer.current);
-        escTimer.current = setTimeout(() => setEscArmed(false), 1200);
+      if (e.target.closest('input, textarea, select')) return;
+
+      switch (e.key) {
+        case 'Escape':
+          if (escArmed) {
+            router.push('/');
+          } else {
+            setEscArmed(true);
+            clearTimeout(escTimer.current);
+            escTimer.current = setTimeout(() => setEscArmed(false), 1200);
+          }
+          break;
+        case 'ArrowRight':
+          if (media.length > 1) {
+            e.preventDefault();
+            setHeroIndex((i) => (i + 1) % media.length);
+          }
+          break;
+        case 'ArrowLeft':
+          if (media.length > 1) {
+            e.preventDefault();
+            setHeroIndex((i) => (i - 1 + media.length) % media.length);
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setButtonFocus((f) => (f === null || f === 'commission' ? 'back' : 'commission'));
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setButtonFocus((f) => (f === null || f === 'back' ? 'commission' : 'back'));
+          break;
+        case 'Enter':
+          if (buttonFocus === 'back') {
+            e.preventDefault();
+            router.push('/');
+          } else if (buttonFocus === 'commission') {
+            e.preventDefault();
+            window.open(CONTACT_URL, '_blank', 'noopener');
+          }
+          break;
+        default:
       }
     };
     window.addEventListener('keydown', onKey);
@@ -29,7 +69,7 @@ export default function MiniDetail({ mini }) {
       window.removeEventListener('keydown', onKey);
       clearTimeout(escTimer.current);
     };
-  }, [escArmed, router]);
+  }, [escArmed, router, buttonFocus, media.length]);
 
   if (!mini) return null;
 
@@ -42,9 +82,10 @@ export default function MiniDetail({ mini }) {
 
   return (
     <article className="mini-detail">
-      <Link href="/" className="back-link">
+      <Link href="/" className={buttonFocus === 'back' ? 'back-link key-focused' : 'back-link'}>
         {t('back_to_gallery')}
       </Link>
+      <p className="keys-hint">{t('detail_hint')}</p>
       {escArmed && <div className="esc-toast">{t('esc_again')}</div>}
 
       <div className="detail-layout">
@@ -52,9 +93,24 @@ export default function MiniDetail({ mini }) {
           <div className="frame detail-frame">
             <div className="frame-mat">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={asset(mini.cover)} alt={mini.name} />
+              <img src={asset(media[heroIndex] ?? null)} alt={mini.name} />
             </div>
           </div>
+          {media.length > 1 && (
+            <div className="media-strip">
+              {media.map((src, i) => (
+                <button
+                  key={src}
+                  className={i === heroIndex ? 'media-thumb active' : 'media-thumb'}
+                  onClick={() => setHeroIndex(i)}
+                  aria-label={`${mini.name} — photo ${i + 1}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={asset(src)} alt="" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="detail-info">
@@ -82,7 +138,12 @@ export default function MiniDetail({ mini }) {
             ))}
           </div>
           {mini.notes && <p className="notes">{mini.notes}</p>}
-          <a className="cta" href={CONTACT_URL} target="_blank" rel="noopener noreferrer">
+          <a
+            className={buttonFocus === 'commission' ? 'cta key-focused' : 'cta'}
+            href={CONTACT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {mini.forSale ? t('sold_via') : ''} {t('commission_cta')}
           </a>
         </div>

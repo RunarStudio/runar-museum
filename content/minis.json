@@ -16,6 +16,7 @@
     "notes": "Trench crusade diorama build for black chalice compettition",
     "cover": "images/trench-wars-diorama/cover.webp",
     "thumb": "images/trench-wars-diorama/cover-thumb.webp",
+    "gallery": [],
     "process": []
   },
   {
@@ -38,6 +39,7 @@
     "notes": "Sample entry to test the website pipeline. Add a photo to 'Cover image', or delete this row once real entries exist.",
     "cover": null,
     "thumb": null,
+    "gallery": [],
     "process": []
   },
   {
@@ -60,11 +62,12 @@
     "notes": "Sample entry to test the website pipeline. Not for sale — portfolio piece.",
     "cover": null,
     "thumb": null,
+    "gallery": [],
     "process": []
   },
   {
     "id": "3999d707-fb3c-8050-8b97-c8c2c1972624",
-    "slug": "This demon is ready to have fun in the table",
+    "slug": "this-demon-is-ready-to-have-fun-in-the-table",
     "name": "Angel Dust 40mm",
     "warband": "7 Rings of hell",
     "game": "Other",
@@ -79,11 +82,12 @@
     "forSale": false,
     "price": null,
     "notes": "Resized to be in a 40mm base.",
-    "cover": "images/This demon is ready to have fun in the table/cover.webp",
-    "thumb": "images/This demon is ready to have fun in the table/cover-thumb.webp",
+    "cover": "images/this-demon-is-ready-to-have-fun-in-the-table/cover.webp",
+    "thumb": "images/this-demon-is-ready-to-have-fun-in-the-table/cover-thumb.webp",
+    "gallery": [],
     "process": [
-      "images/This demon is ready to have fun in the table/wip-1.webp",
-      "images/This demon is ready to have fun in the table/wip-2.webp"
+      "images/this-demon-is-ready-to-have-fun-in-the-table/wip-1.webp",
+      "images/this-demon-is-ready-to-have-fun-in-the-table/wip-2.webp"
     ]
   },
   {
@@ -105,6 +109,7 @@
     "notes": "Sample work-in-progress entry to test the WIP Lab section.",
     "cover": null,
     "thumb": null,
+    "gallery": [],
     "process": []
   }
 ]

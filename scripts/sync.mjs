@@ -66,24 +66,50 @@ function slugify(text) {
     .slice(0, 60) || 'mini';
 }
 
+// Uploaded Notion files live at .../<uuid>/<filename>?signed — the uuid is
+// stable across fetches even though the signature changes, so it works as
+// a cache key. External files are keyed by their full URL.
+function stableId(url, isExternal) {
+  return isExternal ? url : (url.match(/\/([0-9a-f-]{36})\/[^/?]+/i)?.[1] ?? url.split('?')[0]);
+}
+
 function fileEntries(prop) {
   return (prop?.files ?? []).map((f) => {
     const url = f.type === 'external' ? f.external.url : f.file.url;
-    // Uploaded Notion files live at .../<uuid>/<filename>?signed — the uuid is
-    // stable across fetches even though the signature changes, so it works as
-    // a cache key. External files are keyed by their full URL.
-    const stable =
-      f.type === 'external'
-        ? url
-        : (url.match(/\/([0-9a-f-]{36})\/[^/?]+/i)?.[1] ?? url.split('?')[0]);
-    return { url, stableId: stable, name: f.name ?? 'image' };
+    return { url, stableId: stableId(url, f.type === 'external'), name: f.name ?? 'image' };
   });
+}
+
+// Images placed in the page body (below the properties) also join the
+// mini's photo gallery. Containers (columns, toggles, …) are recursed.
+async function contentImages(blockId, depth = 0) {
+  if (depth > 3) return [];
+  const images = [];
+  let cursor = undefined;
+  do {
+    const url = new URL(`${NOTION_API}/blocks/${blockId}/children`);
+    url.searchParams.set('page_size', '100');
+    if (cursor) url.searchParams.set('start_cursor', cursor);
+    const res = await fetch(url, { headers: NOTION_HEADERS });
+    if (!res.ok) throw new Error(`Blocks fetch failed: ${res.status} ${await res.text()}`);
+    const data = await res.json();
+    for (const b of data.results) {
+      if (b.type === 'image') {
+        const src = b.image.type === 'external' ? b.image.external.url : b.image.file.url;
+        images.push({ url: src, stableId: stableId(src, b.image.type === 'external') });
+      } else if (b.has_children) {
+        images.push(...(await contentImages(b.id, depth + 1)));
+      }
+    }
+    cursor = data.has_more ? data.next_cursor : undefined;
+  } while (cursor);
+  return images;
 }
 
 function mapPage(page) {
   const p = page.properties;
   const name = plain(p['Name']?.title);
-  const slug = plain(p['Slug']?.rich_text) || slugify(name);
+  const slug = slugify(plain(p['Slug']?.rich_text) || name);
   return {
     id: page.id,
     slug,
@@ -166,6 +192,22 @@ async function main() {
     } else {
       mini.cover = null;
       mini.thumb = null;
+    }
+
+    mini.gallery = [];
+    const bodyImages = await contentImages(mini.id);
+    for (let i = 0; i < bodyImages.length; i++) {
+      const f = bodyImages[i];
+      const key = `${mini.slug}/photo-${i + 1}`;
+      newManifest[key] = f.stableId;
+      const outFile = path.join(dir, `photo-${i + 1}.webp`);
+      const exists = await fs.access(outFile).then(() => true, () => false);
+      if (manifest[key] !== f.stableId || !exists) {
+        await fs.mkdir(dir, { recursive: true });
+        console.log(`  ↓ ${key}`);
+        await downloadAndOptimize(f.url, path.join(dir, `photo-${i + 1}`));
+      }
+      mini.gallery.push(`images/${mini.slug}/photo-${i + 1}.webp`);
     }
 
     mini.process = [];

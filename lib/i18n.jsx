@@ -38,6 +38,7 @@ const STRINGS = {
     keys_hint: '⌨️ Arrow keys to browse · Enter to zoom · Esc/Space to close',
     lightbox_hint: '‹ › browse · ↓ select details · Enter open',
     esc_again: 'Press Esc again to return to the gallery',
+    detail_hint: '⌨️ ‹ › photos · ↑↓ buttons · Enter select · Esc ×2 back',
   },
   es: {
     nav_gallery: 'Galería',
@@ -74,6 +75,7 @@ const STRINGS = {
     keys_hint: '⌨️ Flechas para navegar · Enter para ampliar · Esc/Espacio para cerrar',
     lightbox_hint: '‹ › navegar · ↓ seleccionar detalles · Enter abrir',
     esc_again: 'Pulsa Esc otra vez para volver a la galería',
+    detail_hint: '⌨️ ‹ › fotos · ↑↓ botones · Enter seleccionar · Esc ×2 volver',
   },
 };
 

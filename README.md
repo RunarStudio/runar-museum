@@ -20,6 +20,10 @@ Notion "🏛️ Miniatures Museum" DB ──(nightly GitHub Action)──▶ con
 Edit the Notion database — that's it. Add photos to *Cover image* / *Process images*,
 tick *Published*, and the site updates on the next sync.
 
+Images you place in the **page body** (open the mini's row as a page and drop images
+into the content) are also pulled in — they appear in the photo strip under the main
+image on the mini's detail page, in the same order as in Notion.
+
 ### Manual update (don't want to wait for the nightly sync)
 
 1. Edit the **🏛️ Miniatures Museum** database in Notion (add/edit minis, upload photos, tick **Published**).
