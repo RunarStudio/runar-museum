@@ -1,13 +1,16 @@
 :root {
-  --bg: #14120f;
-  --bg-raised: #1e1b16;
-  --border: #353026;
+  --bg: #0b0a08;
+  --bg-raised: #171410;
+  --border: #2e2920;
   --text: #ece7dc;
   --text-dim: #a89f8d;
   --accent: #d4a24e;
   --accent-dark: #8a6a2f;
   --badge: #2e7d43;
   --radius: 10px;
+  --frame-outer: #6b4f22;
+  --frame-gold: #b8893c;
+  --frame-mat: #131110;
   color-scheme: dark;
 }
 
@@ -88,7 +91,21 @@ main {
 .tagline {
   color: var(--text-dim);
   font-style: italic;
-  margin: 0.5rem 0 1.5rem;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.keys-hint {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  font-family: sans-serif;
+  opacity: 0.7;
+  margin: 0 0 1.25rem;
+}
+
+@media (max-width: 899px) {
+  .keys-hint {
+    display: none;
+  }
 }
 
 .filter-bar {
@@ -207,16 +224,39 @@ main {
   border-color: var(--accent-dark);
 }
 
-.card-image {
-  position: relative;
-  aspect-ratio: 1;
-  background: #0d0c0a;
+.card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent), 0 0 24px rgba(212, 162, 78, 0.25);
 }
 
-.card-image img {
+/* "Marco" — ornate picture frame that adapts to any image aspect ratio:
+   the image is never cropped (object-fit: contain); the dark mat absorbs
+   the difference between the frame shape and the photo shape. */
+.frame {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 10px;
+  background:
+    linear-gradient(135deg, var(--frame-gold), var(--frame-outer) 40%, var(--frame-gold) 60%, var(--frame-outer));
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.frame-mat {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  background: var(--frame-mat);
+  box-shadow: inset 0 0 0 1px rgba(212, 162, 78, 0.35), inset 0 0 18px rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.frame-mat img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
   display: block;
 }
 
@@ -276,11 +316,8 @@ main {
   }
 }
 
-.detail-hero img {
-  width: 100%;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  display: block;
+.detail-frame {
+  padding: 14px;
 }
 
 .detail-info h1 {
@@ -367,6 +404,203 @@ main {
   justify-content: center;
   font-size: 0.85rem;
   font-family: sans-serif;
+}
+
+/* Filter orb + drawer (desktop) */
+.filter-orb {
+  display: none;
+  position: fixed;
+  right: 1.25rem;
+  top: 45%;
+  z-index: 60;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  border: 2px solid var(--accent-dark);
+  background: radial-gradient(circle at 30% 30%, #2a2418, var(--bg-raised) 70%);
+  color: var(--accent);
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7), 0 0 12px rgba(212, 162, 78, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filter-orb:hover,
+.filter-orb.open {
+  transform: scale(1.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 162, 78, 0.45);
+}
+
+.orb-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--accent);
+  color: #14120f;
+  font-size: 0.72rem;
+  font-family: sans-serif;
+  font-weight: bold;
+  border-radius: 999px;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-drawer {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 55;
+  width: min(22rem, 90vw);
+  background: var(--bg-raised);
+  border-left: 1px solid var(--border);
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.6);
+  transform: translateX(105%);
+  transition: transform 0.25s ease;
+  overflow-y: auto;
+  padding: 1rem 1.25rem 2rem;
+}
+
+.filter-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.drawer-head h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.drawer-close {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 6px;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+}
+
+.drawer-close:hover {
+  color: var(--accent);
+  border-color: var(--accent-dark);
+}
+
+.filter-drawer .filter-bar {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.filter-drawer .filter-group {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+@media (min-width: 900px) {
+  .filter-inline {
+    display: none;
+  }
+  .filter-orb {
+    display: block;
+  }
+  .filter-drawer {
+    display: block;
+  }
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(5, 4, 3, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-inner {
+  max-width: min(90vw, 1100px);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lightbox-frame {
+  aspect-ratio: auto;
+  padding: 16px;
+  height: min(78vh, 900px);
+  width: min(86vw, 1000px);
+}
+
+.lightbox-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 101;
+  background: rgba(30, 27, 22, 0.8);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 2.2rem;
+  line-height: 1;
+  width: 3rem;
+  height: 4.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.lightbox-nav.prev {
+  left: 1rem;
+}
+
+.lightbox-nav.next {
+  right: 1rem;
+}
+
+.lightbox-nav:hover {
+  border-color: var(--accent);
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 101;
+  background: rgba(30, 27, 22, 0.8);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.lightbox-close:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* Static pages */

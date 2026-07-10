@@ -24,8 +24,12 @@ export default function MiniDetail({ mini }) {
 
       <div className="detail-layout">
         <div className="detail-hero">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset(mini.cover)} alt={mini.name} />
+          <div className="frame detail-frame">
+            <div className="frame-mat">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={asset(mini.cover)} alt={mini.name} />
+            </div>
+          </div>
         </div>
 
         <div className="detail-info">

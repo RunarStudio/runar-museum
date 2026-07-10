@@ -32,6 +32,10 @@ const STRINGS = {
       'Runar Studio is a one-person miniature painting and 3D printing studio. This museum collects everything painted over the years — finished pieces, work in progress, and the occasional experiment.',
     footer: 'Runar Studio — all miniatures painted by hand.',
     minis_count: 'minis',
+    filters: 'Filters',
+    close: 'Close',
+    view_details: 'View details',
+    keys_hint: '⌨️ Arrow keys to browse · Enter to zoom · Esc/Space to close',
   },
   es: {
     nav_gallery: 'Galería',
@@ -62,6 +66,10 @@ const STRINGS = {
       'Runar Studio es un estudio unipersonal de pintura de miniaturas e impresión 3D. Este museo reúne todo lo pintado a lo largo de los años: piezas terminadas, trabajos en curso y algún que otro experimento.',
     footer: 'Runar Studio — todas las miniaturas pintadas a mano.',
     minis_count: 'minis',
+    filters: 'Filtros',
+    close: 'Cerrar',
+    view_details: 'Ver detalles',
+    keys_hint: '⌨️ Flechas para navegar · Enter para ampliar · Esc/Espacio para cerrar',
   },
 };
 

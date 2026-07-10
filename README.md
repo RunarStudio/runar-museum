@@ -20,6 +20,18 @@ Notion "🏛️ Miniatures Museum" DB ──(nightly GitHub Action)──▶ con
 Edit the Notion database — that's it. Add photos to *Cover image* / *Process images*,
 tick *Published*, and the site updates on the next sync.
 
+### Manual update (don't want to wait for the nightly sync)
+
+1. Edit the **🏛️ Miniatures Museum** database in Notion (add/edit minis, upload photos, tick **Published**).
+2. Open https://github.com/RunarStudio/runar-museum/actions/workflows/sync.yml
+3. Click **Run workflow** → **Run workflow** (green button, leave everything default).
+4. Wait ~2 minutes for the run to turn green — the site at
+   https://runarstudio.github.io/runar-museum/ now shows the new content
+   (hard-refresh with Ctrl+F5 if your browser cached the old page).
+
+To **remove** a mini from the site, untick *Published* in Notion and run the same workflow —
+its images are pruned from the repo automatically.
+
 ## One-time setup (secrets)
 
 1. Go to https://www.notion.so/profile/integrations → **New integration**
