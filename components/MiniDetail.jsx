@@ -1,12 +1,36 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useLang } from '../lib/i18n.jsx';
 import { asset } from '../lib/data.js';
 import { CONTACT_URL } from '../site.config.mjs';
 
 export default function MiniDetail({ mini }) {
   const { t, lang } = useLang();
+  const router = useRouter();
+  const [escArmed, setEscArmed] = useState(false); // first Esc pressed, waiting for second
+  const escTimer = useRef(null);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape' || e.target.closest('input, textarea, select')) return;
+      if (escArmed) {
+        router.push('/');
+      } else {
+        setEscArmed(true);
+        clearTimeout(escTimer.current);
+        escTimer.current = setTimeout(() => setEscArmed(false), 1200);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      clearTimeout(escTimer.current);
+    };
+  }, [escArmed, router]);
+
   if (!mini) return null;
 
   const tags = [
@@ -21,6 +45,7 @@ export default function MiniDetail({ mini }) {
       <Link href="/" className="back-link">
         {t('back_to_gallery')}
       </Link>
+      {escArmed && <div className="esc-toast">{t('esc_again')}</div>}
 
       <div className="detail-layout">
         <div className="detail-hero">

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useLang } from '../lib/i18n.jsx';
 import { asset } from '../lib/data.js';
 
@@ -22,7 +23,9 @@ export default function Gallery({ minis }) {
   // Keyboard navigation + lightbox
   const [selected, setSelected] = useState(-1);
   const [lightbox, setLightbox] = useState(-1); // index into filtered, -1 = closed
+  const [detailsFocus, setDetailsFocus] = useState(false); // ↓ in lightbox highlights "view details"
   const gridRef = useRef(null);
+  const router = useRouter();
 
   const options = useMemo(
     () => ({
@@ -69,12 +72,24 @@ export default function Gallery({ minis }) {
         if (e.key === 'Escape' || e.key === ' ') {
           e.preventDefault();
           setLightbox(-1);
+          setDetailsFocus(false);
         } else if (e.key === 'ArrowRight') {
           e.preventDefault();
           setLightbox((l) => Math.min(l + 1, filtered.length - 1));
+          setDetailsFocus(false);
         } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
           setLightbox((l) => Math.max(l - 1, 0));
+          setDetailsFocus(false);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setDetailsFocus(true);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setDetailsFocus(false);
+        } else if (e.key === 'Enter' && detailsFocus && filtered[lightbox]) {
+          e.preventDefault();
+          router.push(`/minis/${filtered[lightbox].slug}/`);
         }
         return;
       }
@@ -125,7 +140,7 @@ export default function Gallery({ minis }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [lightbox, selected, filtered]);
+  }, [lightbox, selected, filtered, detailsFocus, router]);
 
   const hasFilters = warband || game || technique || topic || forSaleOnly || search;
   const activeFilterCount =
@@ -231,7 +246,11 @@ export default function Gallery({ minis }) {
       {lightbox >= 0 && filtered[lightbox] && (
         <Lightbox
           mini={filtered[lightbox]}
-          onClose={() => setLightbox(-1)}
+          detailsFocus={detailsFocus}
+          onClose={() => {
+            setLightbox(-1);
+            setDetailsFocus(false);
+          }}
           onPrev={() => setLightbox((l) => Math.max(l - 1, 0))}
           onNext={() => setLightbox((l) => Math.min(l + 1, filtered.length - 1))}
           hasPrev={lightbox > 0}
@@ -242,7 +261,7 @@ export default function Gallery({ minis }) {
   );
 }
 
-function Lightbox({ mini, onClose, onPrev, onNext, hasPrev, hasNext }) {
+function Lightbox({ mini, detailsFocus, onClose, onPrev, onNext, hasPrev, hasNext }) {
   const { t } = useLang();
   return (
     <div className="lightbox" role="dialog" aria-modal="true" aria-label={mini.name} onClick={onClose}>
@@ -255,8 +274,11 @@ function Lightbox({ mini, onClose, onPrev, onNext, hasPrev, hasNext }) {
         </div>
         <div className="lightbox-caption">
           <span>{mini.name}</span>
-          <Link href={`/minis/${mini.slug}/`}>{t('view_details')} →</Link>
+          <Link href={`/minis/${mini.slug}/`} className={detailsFocus ? 'details-link focused' : 'details-link'}>
+            {t('view_details')} →
+          </Link>
         </div>
+        <p className="lightbox-hint">{t('lightbox_hint')}</p>
       </div>
       {hasPrev && (
         <button className="lightbox-nav prev" onClick={(e) => { e.stopPropagation(); onPrev(); }} aria-label="Previous">
