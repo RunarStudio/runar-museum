@@ -1,10 +1,29 @@
 [
   {
+    "id": "3999d707-fb3c-8009-8867-c2e025e8427d",
+    "slug": "trench-wars-diorama",
+    "name": "Trench wars Diorama",
+    "warband": null,
+    "game": "Trench crusade",
+    "topics": [
+      "Diorama"
+    ],
+    "techniques": [],
+    "room": "Entrance",
+    "datePainted": "2026-06-22",
+    "forSale": false,
+    "price": null,
+    "notes": "Trench crusade diorama build for black chalice compettition",
+    "cover": "images/trench-wars-diorama/cover.webp",
+    "thumb": "images/trench-wars-diorama/cover-thumb.webp",
+    "process": []
+  },
+  {
     "id": "3999d707-fb3c-81bb-892c-cdc59bad5365",
     "slug": "sample-plague-marine",
     "name": "ANOTHER SAMPLE — Death Guard Plague Marine",
     "warband": "Death Guard",
-    "game": "Warhammer 40k",
+    "game": "Gaslands",
     "topics": [
       "Infantry"
     ],
@@ -12,7 +31,7 @@
       "Wet blending",
       "Glazing"
     ],
-    "room": "40k Wing",
+    "room": "Miniature showcase",
     "datePainted": "2026-05-01",
     "forSale": true,
     "price": 45,
@@ -26,7 +45,7 @@
     "slug": "sample-ork-nob",
     "name": "SAMPLE — Ork Nob with Big Choppa",
     "warband": "Orks",
-    "game": "Warhammer 40k",
+    "game": "Gaslands",
     "topics": [
       "Hero"
     ],
@@ -34,7 +53,7 @@
       "Drybrush",
       "OSL"
     ],
-    "room": "40k Wing",
+    "room": "Miniature showcase",
     "datePainted": "2026-03-14",
     "forSale": false,
     "price": null,
@@ -42,6 +61,30 @@
     "cover": null,
     "thumb": null,
     "process": []
+  },
+  {
+    "id": "3999d707-fb3c-8050-8b97-c8c2c1972624",
+    "slug": "This demon is ready to have fun in the table",
+    "name": "Angel Dust 40mm",
+    "warband": "7 Rings of hell",
+    "game": "Other",
+    "topics": [
+      "Hero"
+    ],
+    "techniques": [
+      "Freehand"
+    ],
+    "room": "Animations & figures",
+    "datePainted": "2025-09-12",
+    "forSale": false,
+    "price": null,
+    "notes": "Resized to be in a 40mm base.",
+    "cover": "images/This demon is ready to have fun in the table/cover.webp",
+    "thumb": "images/This demon is ready to have fun in the table/cover-thumb.webp",
+    "process": [
+      "images/This demon is ready to have fun in the table/wip-1.webp",
+      "images/This demon is ready to have fun in the table/wip-2.webp"
+    ]
   },
   {
     "id": "3999d707-fb3c-81e1-a386-e7b1aecda0dd",
