@@ -16,8 +16,50 @@
     "notes": "Trench crusade diorama build for black chalice compettition",
     "cover": "images/trench-wars-diorama/cover.webp",
     "thumb": "images/trench-wars-diorama/cover-thumb.webp",
-    "gallery": [],
+    "gallery": [
+      "images/trench-wars-diorama/photo-1.webp",
+      "images/trench-wars-diorama/photo-2.webp",
+      "images/trench-wars-diorama/photo-3.webp",
+      "images/trench-wars-diorama/photo-4.webp",
+      "images/trench-wars-diorama/photo-5.webp",
+      "images/trench-wars-diorama/photo-6.webp",
+      "images/trench-wars-diorama/photo-7.webp",
+      "images/trench-wars-diorama/photo-8.webp"
+    ],
     "process": []
+  },
+  {
+    "id": "3a09d707-fb3c-802b-a355-d27cfa0fec3c",
+    "slug": "blood-naval-witch",
+    "name": "Blood Naval Witch",
+    "warband": "Trench Heretics",
+    "game": "Trench crusade",
+    "topics": [
+      "Hero"
+    ],
+    "techniques": [],
+    "room": "Miniature showcase",
+    "datePainted": "2026-04-20",
+    "forSale": false,
+    "price": null,
+    "notes": "Painted with a bloody idea in mind, presented in the Black chalice competition on june 30-2026",
+    "cover": "images/blood-naval-witch/cover.webp",
+    "thumb": "images/blood-naval-witch/cover-thumb.webp",
+    "gallery": [
+      "images/blood-naval-witch/photo-1.webp",
+      "images/blood-naval-witch/photo-2.webp",
+      "images/blood-naval-witch/photo-3.webp",
+      "images/blood-naval-witch/photo-4.webp",
+      "images/blood-naval-witch/photo-5.webp",
+      "images/blood-naval-witch/photo-6.webp",
+      "images/blood-naval-witch/photo-7.webp"
+    ],
+    "process": [
+      "images/blood-naval-witch/wip-1.webp",
+      "images/blood-naval-witch/wip-2.webp",
+      "images/blood-naval-witch/wip-3.webp",
+      "images/blood-naval-witch/wip-4.webp"
+    ]
   },
   {
     "id": "3999d707-fb3c-8050-8b97-c8c2c1972624",
@@ -38,7 +80,9 @@
     "notes": "Resized to be in a 40mm base.",
     "cover": "images/this-demon-is-ready-to-have-fun-in-the-table/cover.webp",
     "thumb": "images/this-demon-is-ready-to-have-fun-in-the-table/cover-thumb.webp",
-    "gallery": [],
+    "gallery": [
+      "images/this-demon-is-ready-to-have-fun-in-the-table/photo-1.webp"
+    ],
     "process": [
       "images/this-demon-is-ready-to-have-fun-in-the-table/wip-1.webp",
       "images/this-demon-is-ready-to-have-fun-in-the-table/wip-2.webp"
