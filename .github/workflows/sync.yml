@@ -17,11 +17,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  sync-build-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -62,5 +59,15 @@ jobs:
         with:
           path: out
 
+  # Deploy runs as a separate job so the artifact backend has time to become
+  # consistent before deploy-pages queries it — same-job deploys can hit a
+  # race where the just-uploaded artifact isn't yet visible ("Found 0 artifacts").
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
