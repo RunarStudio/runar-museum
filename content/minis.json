@@ -151,22 +151,26 @@
       {
         "src": "images/blood-naval-witch/wip-1.webp",
         "w": 1600,
-        "h": 1200
+        "h": 1200,
+        "board": "images/blood-naval-witch/wip-1-board.webp"
       },
       {
         "src": "images/blood-naval-witch/wip-2.webp",
         "w": 1600,
-        "h": 1200
+        "h": 1200,
+        "board": "images/blood-naval-witch/wip-2-board.webp"
       },
       {
         "src": "images/blood-naval-witch/wip-3.webp",
         "w": 1600,
-        "h": 1200
+        "h": 1200,
+        "board": "images/blood-naval-witch/wip-3-board.webp"
       },
       {
         "src": "images/blood-naval-witch/wip-4.webp",
         "w": 1600,
-        "h": 1200
+        "h": 1200,
+        "board": "images/blood-naval-witch/wip-4-board.webp"
       }
     ]
   },
@@ -210,12 +214,14 @@
       {
         "src": "images/this-demon-is-ready-to-have-fun-in-the-table/wip-1.webp",
         "w": 1600,
-        "h": 1200
+        "h": 1200,
+        "board": "images/this-demon-is-ready-to-have-fun-in-the-table/wip-1-board.webp"
       },
       {
         "src": "images/this-demon-is-ready-to-have-fun-in-the-table/wip-2.webp",
         "w": 1600,
-        "h": 1200
+        "h": 1200,
+        "board": "images/this-demon-is-ready-to-have-fun-in-the-table/wip-2-board.webp"
       }
     ]
   }

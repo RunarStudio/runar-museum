@@ -263,7 +263,7 @@ async function main() {
       if (manifest[key] !== f.stableId || !exists) {
         await fs.mkdir(dir, { recursive: true });
         console.log(`  ↓ ${key}`);
-        dims = await downloadAndOptimize(f.url, path.join(dir, `wip-${i + 1}`));
+        dims = await downloadAndOptimize(f.url, path.join(dir, `wip-${i + 1}`), { board: true });
       } else {
         dims = await fileDims(outFile);
       }
@@ -271,6 +271,7 @@ async function main() {
         src: `images/${mini.slug}/wip-${i + 1}.webp`,
         w: dims.w,
         h: dims.h,
+        board: `images/${mini.slug}/wip-${i + 1}-board.webp`,
       });
     }
 
