@@ -1,0 +1,716 @@
+<title>Runar Museum Halls</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0a08; --bg-raised:#171410; --border:#2e2920;
+    --text:#ece7dc; --text-dim:#a89f8d;
+    --accent:#d4a24e; --accent-dark:#8a6a2f;
+    --frame-gold:#b8893c;
+    --void:#04070a; --void-line:#3ad6a6; --void-dim:#1d6b57;
+    --ui: 'IBM Plex Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --display: 'Cinzel', Georgia, serif;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--ui);overflow:hidden;-webkit-tap-highlight-color:transparent}
+  #stage{position:fixed;inset:0}
+  canvas{display:block;width:100%;height:100%}
+
+  /* ---- overlay chrome ---- */
+  .hud{position:fixed;pointer-events:none;z-index:5}
+  .hud > *{pointer-events:auto}
+
+  #top{top:0;left:0;right:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;
+       background:linear-gradient(180deg,rgba(6,5,4,.88),rgba(6,5,4,0));}
+  .brand{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .brand b{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .brand span{font-size:11px;color:var(--text-dim);letter-spacing:.05em}
+
+  .seg{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:rgba(12,10,8,.82);backdrop-filter:blur(6px)}
+  .seg button{appearance:none;border:0;background:transparent;color:var(--text-dim);font:500 11px/1 var(--ui);
+    letter-spacing:.1em;text-transform:uppercase;padding:9px 11px;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}
+  .seg button + button{border-left:1px solid var(--border)}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#140f06}
+  .seg button:hover:not([aria-pressed="true"]){color:var(--text)}
+  .seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .ctrls{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .ctrl-row{display:flex;gap:8px;align-items:center}
+  .ctrl-label{font:500 9px/1 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
+
+  /* ---- room plaque, bottom left ---- */
+  #plaque{left:16px;bottom:16px;max-width:min(340px,60vw);
+    border-left:2px solid var(--accent);padding:2px 0 2px 12px}
+  #plaque .rm{font-family:var(--display);font-weight:700;font-size:clamp(17px,3.4vw,23px);letter-spacing:.05em;line-height:1.15;text-wrap:balance}
+  #plaque .meta{font:400 11px/1.5 var(--mono);color:var(--text-dim);margin-top:5px;font-variant-numeric:tabular-nums}
+  #plaque .meta em{color:var(--accent);font-style:normal}
+
+  /* ---- rail nav, bottom right ---- */
+  #rail{right:16px;bottom:16px;display:flex;align-items:center;gap:10px}
+  .arrow{width:46px;height:46px;border-radius:50%;border:1px solid var(--border);background:rgba(12,10,8,.85);
+    color:var(--text);font-size:19px;cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(6px);transition:border-color .15s,color .15s}
+  .arrow:hover{border-color:var(--accent);color:var(--accent)}
+  .arrow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  #pos{font:500 12px/1 var(--mono);color:var(--text-dim);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+
+  /* ---- hint strip ---- */
+  #hint{left:50%;transform:translateX(-50%);bottom:18px;font:400 10px/1 var(--mono);color:var(--text-dim);
+    letter-spacing:.08em;white-space:nowrap;background:rgba(6,5,4,.7);padding:7px 12px;border-radius:20px;border:1px solid var(--border)}
+  #hint kbd{font:500 10px/1 var(--mono);color:var(--accent);background:none;border:0;padding:0 1px}
+
+  /* ---- artwork card, appears on click ---- */
+  #card{position:fixed;z-index:8;inset:auto 0 0 0;transform:translateY(101%);transition:transform .3s cubic-bezier(.2,.7,.3,1);
+    background:linear-gradient(180deg,rgba(23,20,16,.97),rgba(11,10,8,.99));border-top:1px solid var(--border);
+    padding:18px 18px 22px;display:flex;gap:16px;align-items:flex-start}
+  #card.open{transform:translateY(0)}
+  #card .sw{width:64px;height:64px;border-radius:4px;border:2px solid var(--frame-gold);flex:none}
+  #card .body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+  #card .body h3{margin:0;font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.03em}
+  #card .body p{margin:0;font:400 12px/1.55 var(--ui);color:var(--text-dim)}
+  #card .body p.note{font-family:var(--mono);font-size:10.5px;color:var(--accent-dark)}
+  #card .go{align-self:flex-start;margin-top:6px;font:600 10px/1 var(--ui);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);border:1px solid var(--accent-dark);border-radius:6px;padding:9px 13px;background:none;cursor:pointer}
+  #card .go:hover{background:var(--accent);color:#140f06}
+  #card .x{position:absolute;top:10px;right:12px;border:0;background:none;color:var(--text-dim);font-size:20px;cursor:pointer;line-height:1}
+  #card .x:hover{color:var(--text)}
+
+  /* ---- loading ---- */
+  #boot{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:var(--bg);transition:opacity .6s;text-align:center}
+  #boot.gone{opacity:0;pointer-events:none}
+  #boot b{display:block;font-family:var(--display);font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-size:13px}
+  #boot span{display:block;margin-top:9px;font:400 11px/1 var(--mono);color:var(--text-dim)}
+
+  /* matrix skin recolors the chrome */
+  body[data-skin="matrix"]{--accent:#3ad6a6;--accent-dark:#1d6b57;--border:#16302a;--text:#dcf3ec;--text-dim:#6f9c91}
+  body[data-skin="matrix"] .brand b,
+  body[data-skin="matrix"] #plaque .rm{font-family:var(--mono);font-weight:500;letter-spacing:.1em}
+
+  @media (max-width:720px){
+    #hint{display:none}
+    #top{padding:11px 12px}
+    .brand span{display:none}
+    .seg button{padding:9px 9px;font-size:10px}
+    #plaque{left:12px;bottom:86px;max-width:70vw}
+    #rail{right:12px;bottom:12px;left:12px;justify-content:space-between}
+    #card{flex-direction:column;gap:12px}
+    #card .sw{width:100%;height:78px}
+  }
+  @media (prefers-reduced-motion:reduce){#card{transition:none}}
+</style>
+
+<div id="stage"></div>
+
+<div class="hud" id="top">
+  <div class="brand">
+    <b>Runar Museum</b>
+    <span>Hall prototype &middot; three.js</span>
+  </div>
+  <div class="ctrls">
+    <div class="ctrl-row">
+      <span class="ctrl-label">Skin</span>
+      <div class="seg" id="skinSeg">
+        <button data-skin="dungeon" aria-pressed="true">Dungeon</button>
+        <button data-skin="matrix" aria-pressed="false">Matrix</button>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Move</span>
+      <div class="seg" id="moveSeg">
+        <button data-move="rail" aria-pressed="true">Rail</button>
+        <button data-move="walk" aria-pressed="false">Walk</button>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Room</span>
+      <div class="seg" id="roomSeg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="hud" id="plaque">
+  <div class="rm" id="rmName">&nbsp;</div>
+  <div class="meta" id="rmMeta">&nbsp;</div>
+</div>
+
+<div class="hud" id="rail">
+  <button class="arrow" id="prev" aria-label="Previous piece">&#8592;</button>
+  <span id="pos">0 / 0</span>
+  <button class="arrow" id="next" aria-label="Next piece">&#8594;</button>
+</div>
+
+<div class="hud" id="hint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> move along the rail &nbsp;&middot;&nbsp; <span id="hintMid">drag to look</span> &nbsp;&middot;&nbsp; <kbd>Enter</kbd> inspect &nbsp;&middot;&nbsp; <kbd>Esc</kbd> back
+</div>
+
+<div id="card">
+  <button class="x" id="cardX" aria-label="Close">&times;</button>
+  <div class="sw" id="cardSw"></div>
+  <div class="body">
+    <h3 id="cardTitle">&nbsp;</h3>
+    <p id="cardSub">&nbsp;</p>
+    <p class="note" id="cardNote">&nbsp;</p>
+    <button class="go" id="cardGo">Open detail page &rarr;</button>
+  </div>
+</div>
+
+<div id="boot"><div><b>Lighting the halls</b><span>compiling shaders</span></div></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   CONTENT — mirrors content/minis.json shape. One artboard per
+   IMAGE, not per mini: rooms hold few minis but many photos.
+   ============================================================ */
+const ROOMS = [
+  { name:'Miniature showcase', slug:'miniature-showcase', pieces:[
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'cover',   ar:1.34, hue:24},
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'gallery', ar:0.78, hue:19},
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'gallery', ar:1.50, hue:33},
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'gallery', ar:0.80, hue:14},
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'gallery', ar:1.00, hue:38},
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'gallery', ar:1.34, hue:28},
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'process', ar:0.75, hue:9},
+      {mini:'Trench wars Diorama', slug:'trench-wars-diorama', kind:'process', ar:1.34, hue:44},
+  ]},
+  { name:'Animations & figures', slug:'animations-figures', pieces:[
+      {mini:'Sister of Battle', slug:'sister-of-battle', kind:'cover',   ar:0.74, hue:205},
+      {mini:'Sister of Battle', slug:'sister-of-battle', kind:'gallery', ar:0.76, hue:212},
+      {mini:'Sister of Battle', slug:'sister-of-battle', kind:'gallery', ar:1.34, hue:198},
+      {mini:'Sister of Battle', slug:'sister-of-battle', kind:'gallery', ar:1.00, hue:225},
+      {mini:'Sister of Battle', slug:'sister-of-battle', kind:'process', ar:0.80, hue:190},
+  ]},
+  { name:'Vault of the Unfinished', slug:'vault-unfinished', pieces:[
+      {mini:'Chaos Lord (WIP)', slug:'chaos-lord', kind:'cover', ar:0.78, hue:352},
+  ]},
+];
+
+const MIN_SLOTS = 3;   // short rooms get padded with empty black boards
+const SPAN      = 4.6; // metres between facing pairs
+const WALL_X    = 3.1;
+const EYE       = 1.62;
+
+/* ============================================================
+   LAYOUT — pure geometry. Knows nothing about any skin.
+   Returns slot transforms; skins only dress them.
+   ============================================================ */
+function layout(pieces){
+  const n = Math.max(MIN_SLOTS, pieces.length);
+  const slots = [];
+  for(let i=0;i<n;i++){
+    const side = (i % 2 === 0) ? -1 : 1;          // left wall, then right
+    const z    = -(3.4 + Math.floor(i/2) * SPAN);
+    slots.push({
+      i, side, z,
+      pos:[side * WALL_X, 1.65, z],
+      rotY: side === -1 ? Math.PI/2 : -Math.PI/2,
+      piece: pieces[i] || null,                    // null => empty black board
+      // rail stop: standing in the middle, facing the wall
+      stop:{ pos:[side * 0.55, EYE, z + 0.15], look:[side * WALL_X, 1.65, z] }
+    });
+  }
+  const depth = 3.4 + Math.ceil(n/2) * SPAN;
+  return { slots, n, depth };
+}
+
+/* ============================================================
+   PLACEHOLDER TEXTURES — stand-ins for the real .webp photos.
+   Artifacts can't load images off the Pages domain, so each
+   board paints a lit "miniature on a plinth" instead.
+   ============================================================ */
+const texCache = new Map();
+function boardTexture(piece, key){
+  if(texCache.has(key)) return texCache.get(key);
+  const W = 512, H = Math.round(512 / piece.ar);
+  const c = document.createElement('canvas'); c.width=W; c.height=H;
+  const g = c.getContext('2d');
+  const h = piece.hue;
+
+  // studio backdrop
+  const bg = g.createRadialGradient(W*.5, H*.42, 10, W*.5, H*.5, H*.82);
+  bg.addColorStop(0, `hsl(${h} 32% 26%)`);
+  bg.addColorStop(1, `hsl(${h} 40% 6%)`);
+  g.fillStyle = bg; g.fillRect(0,0,W,H);
+
+  // the model: stacked silhouette, lit from upper left
+  const cx = W*.5, base = H*.80, mh = H*.52;
+  g.fillStyle = `hsl(${h} 18% 4%)`;
+  g.beginPath();
+  g.ellipse(cx, base, W*.22, H*.035, 0, 0, Math.PI*2); g.fill();       // plinth shadow
+  const body = g.createLinearGradient(cx - W*.16, base - mh, cx + W*.14, base);
+  body.addColorStop(0, `hsl(${h+16} 46% 62%)`);
+  body.addColorStop(.45, `hsl(${h} 38% 34%)`);
+  body.addColorStop(1, `hsl(${h-8} 30% 11%)`);
+  g.fillStyle = body;
+  g.beginPath();
+  g.moveTo(cx, base - mh);                                              // head
+  g.bezierCurveTo(cx + W*.09, base - mh*.92, cx + W*.15, base - mh*.42, cx + W*.13, base);
+  g.lineTo(cx - W*.13, base);
+  g.bezierCurveTo(cx - W*.15, base - mh*.42, cx - W*.09, base - mh*.92, cx, base - mh);
+  g.closePath(); g.fill();
+  // rim light
+  g.strokeStyle = `hsl(${h+30} 72% 74%)`; g.lineWidth = 2.4;
+  g.beginPath();
+  g.moveTo(cx - W*.005, base - mh);
+  g.bezierCurveTo(cx - W*.092, base - mh*.9, cx - W*.152, base - mh*.4, cx - W*.132, base);
+  g.stroke();
+  // base
+  g.fillStyle = `hsl(${h-14} 20% 15%)`;
+  g.fillRect(cx - W*.17, base, W*.34, H*.045);
+
+  // faint photo grain
+  const im = g.getImageData(0,0,W,H), d = im.data;
+  for(let p=0;p<d.length;p+=4){ const v=(Math.random()-.5)*13; d[p]+=v; d[p+1]+=v; d[p+2]+=v; }
+  g.putImageData(im,0,0);
+
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  texCache.set(key, t);
+  return t;
+}
+
+/* ============================================================
+   SKINS — same slots in, different world out.
+   Each returns { world, lights, fog, bg, frame(), boardMat() }.
+   ============================================================ */
+const SKINS = {
+
+  dungeon: {
+    bg: 0x0b0a08,
+    fog: new THREE.Fog(0x0b0a08, 8, 34),
+    frameColor: 0xb8893c,
+    emptyColor: 0x08070a,
+    hudAccent: '#d4a24e',
+    build(L, root){
+      const D = L.depth + SPAN;
+      const stone = new THREE.MeshStandardMaterial({ color:0x35302a, roughness:.94, metalness:.02 });
+      const floorMat = new THREE.MeshStandardMaterial({ color:0x1b1815, roughness:.86, metalness:.05 });
+
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(WALL_X*2+1.2, D+6), floorMat);
+      floor.rotation.x = -Math.PI/2; floor.position.z = -D/2 + 2;
+      root.add(floor);
+
+      const ceil = new THREE.Mesh(new THREE.PlaneGeometry(WALL_X*2+1.2, D+6), stone);
+      ceil.rotation.x = Math.PI/2; ceil.position.set(0, 4.1, -D/2 + 2);
+      root.add(ceil);
+
+      for(const s of [-1, 1]){
+        const w = new THREE.Mesh(new THREE.PlaneGeometry(D+6, 4.1), stone);
+        w.rotation.y = s === -1 ? Math.PI/2 : -Math.PI/2;
+        w.position.set(s*(WALL_X+.55), 2.05, -D/2 + 2);
+        root.add(w);
+        // pilasters between alcoves — reads as masonry, breaks the flat wall
+        for(let k=0;k<=Math.ceil(L.n/2);k++){
+          const p = new THREE.Mesh(new THREE.BoxGeometry(.34,4.1,.5), stone);
+          p.position.set(s*(WALL_X+.36), 2.05, -(1.1 + k*SPAN));
+          root.add(p);
+        }
+      }
+
+      // THE CAP: dungeon closes the corridor. Matrix does not.
+      const endWall = new THREE.Mesh(new THREE.PlaneGeometry(WALL_X*2+1.2, 4.1), stone);
+      endWall.position.set(0, 2.05, -D + 1.4);
+      root.add(endWall);
+      const arch = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.5, 2.5),
+        new THREE.MeshStandardMaterial({ color:0x000000, roughness:1 })
+      );
+      arch.position.set(0, 1.25, -D + 1.38);
+      root.add(arch);
+      const back = new THREE.Mesh(new THREE.PlaneGeometry(WALL_X*2+1.2, 4.1), stone);
+      back.rotation.y = Math.PI; back.position.set(0, 2.05, 3.2);
+      root.add(back);
+
+      const lights = [];
+      const amb = new THREE.AmbientLight(0x50412c, .5); root.add(amb);
+      for(const s of L.slots){
+        // one warm sconce per alcove — this is the whole mood
+        const l = new THREE.PointLight(0xffb257, 9, 8.5, 2);
+        l.position.set(s.side*(WALL_X-.55), 3.0, s.z);
+        root.add(l); lights.push({ l, base:9 });
+        const bulb = new THREE.Mesh(
+          new THREE.SphereGeometry(.055,10,10),
+          new THREE.MeshBasicMaterial({ color:0xffd9a0 })
+        );
+        bulb.position.copy(l.position); root.add(bulb);
+      }
+      return { lights, flicker:true };
+    },
+    boardMat(piece, key){
+      return new THREE.MeshStandardMaterial({ map: boardTexture(piece,key), roughness:.62, metalness:.04 });
+    },
+    frameMat(){
+      return new THREE.MeshStandardMaterial({ color:0xb8893c, roughness:.42, metalness:.72 });
+    }
+  },
+
+  matrix: {
+    bg: 0x04070a,
+    fog: new THREE.Fog(0x04070a, 10, 52),
+    frameColor: 0x3ad6a6,
+    emptyColor: 0x02100c,
+    hudAccent: '#3ad6a6',
+    build(L, root){
+      const D = L.depth + SPAN;
+      // no walls, no ceiling, no end cap — the corridor just keeps going
+      const grid = new THREE.GridHelper(200, 200, 0x3ad6a6, 0x0e3a2e);
+      grid.position.z = -D/2;
+      grid.material.transparent = true; grid.material.opacity = .32;
+      root.add(grid);
+
+      const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(220, 220),
+        new THREE.MeshStandardMaterial({ color:0x04070a, roughness:.28, metalness:.85 })
+      );
+      floor.rotation.x = -Math.PI/2; floor.position.set(0,-0.02,-D/2);
+      root.add(floor);
+
+      // slot markers hovering where a dungeon would put a pilaster
+      for(const s of L.slots){
+        const bar = new THREE.Mesh(
+          new THREE.BoxGeometry(.05, 3.6, .05),
+          new THREE.MeshBasicMaterial({ color:0x1d6b57 })
+        );
+        bar.position.set(s.side*(WALL_X+.5), 1.8, s.z);
+        root.add(bar);
+      }
+
+      const lights = [];
+      root.add(new THREE.AmbientLight(0x7fd8c0, .42));
+      const key = new THREE.DirectionalLight(0xbdfbe6, .55);
+      key.position.set(2, 8, 2); root.add(key);
+      for(const s of L.slots){
+        const l = new THREE.PointLight(0x3ad6a6, 5.5, 7.5, 2);
+        l.position.set(s.side*(WALL_X-.75), 2.4, s.z);
+        root.add(l); lights.push({ l, base:5.5 });
+      }
+      return { lights, flicker:false };
+    },
+    boardMat(piece, key){
+      return new THREE.MeshStandardMaterial({
+        map: boardTexture(piece,key), roughness:.3, metalness:.35,
+        emissive:0x0a2a22, emissiveIntensity:.5
+      });
+    },
+    frameMat(){
+      return new THREE.MeshBasicMaterial({ color:0x3ad6a6 });
+    }
+  }
+};
+
+/* ============================================================
+   RENDERER
+   ============================================================ */
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+stage.appendChild(renderer.domElement);
+
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(58, 1, .05, 300);
+let root = new THREE.Group(); scene.add(root);
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let skinId  = 'dungeon';
+let moveId  = 'rail';
+let roomIdx = 0;
+let L       = null;
+let boards  = [];      // { mesh, slot }
+let lightRig= null;
+let cursor  = 0;       // rail index
+
+const camPos  = new THREE.Vector3();
+const camLook = new THREE.Vector3();
+const tgtPos  = new THREE.Vector3();
+const tgtLook = new THREE.Vector3();
+let yaw = 0, pitch = 0;             // free-look offset (rail) / heading (walk)
+let tYaw = 0, tPitch = 0;
+const walkPos = new THREE.Vector3();
+const keys = Object.create(null);
+
+/* ---- build a room ---- */
+function buildRoom(){
+  root.traverse(o=>{
+    if(o.geometry) o.geometry.dispose();
+    if(o.material){ (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose()); }
+  });
+  scene.remove(root);
+  root = new THREE.Group(); scene.add(root);
+  boards = [];
+
+  const room = ROOMS[roomIdx];
+  const skin = SKINS[skinId];
+  L = layout(room.pieces);
+
+  scene.background = new THREE.Color(skin.bg);
+  scene.fog = skin.fog;
+
+  lightRig = skin.build(L, root);
+
+  for(const s of L.slots){
+    const grp = new THREE.Group();
+    grp.position.set(s.pos[0], s.pos[1], s.pos[2]);
+    grp.rotation.y = s.rotY;
+
+    if(s.piece){
+      // aspect drives the plane — why sync.mjs must emit w/h per image
+      const H = 1.45, W = H * s.piece.ar;
+      const frame = new THREE.Mesh(
+        new THREE.BoxGeometry(W + .16, H + .16, .07),
+        skin.frameMat()
+      );
+      frame.position.z = -.02;
+      grp.add(frame);
+      const art = new THREE.Mesh(
+        new THREE.PlaneGeometry(W, H),
+        skin.boardMat(s.piece, room.slug + ':' + s.i)
+      );
+      art.position.z = .03;
+      grp.add(art);
+      art.userData.slot = s;
+      boards.push({ mesh:art, slot:s });
+    }else{
+      // PADDING: fewer than 3 images => empty black board holds the slot
+      const H = 1.45, W = 1.1;
+      const empty = new THREE.Mesh(
+        new THREE.BoxGeometry(W + .16, H + .16, .07),
+        new THREE.MeshStandardMaterial({ color:skin.emptyColor, roughness:.95, metalness:0 })
+      );
+      grp.add(empty);
+      const edge = new THREE.Mesh(
+        new THREE.BoxGeometry(W + .18, H + .18, .05),
+        new THREE.MeshBasicMaterial({ color:skin.frameColor, wireframe:true, transparent:true, opacity:.18 })
+      );
+      grp.add(edge);
+      boards.push({ mesh:empty, slot:s });
+    }
+    root.add(grp);
+  }
+
+  cursor = 0;
+  walkPos.set(0, EYE, 1.5);
+  yaw = tYaw = 0; pitch = tPitch = 0;
+  snapCamera(true);
+  paintHud();
+}
+
+/* ---- camera targets ---- */
+function snapCamera(instant){
+  const st = L.slots[cursor].stop;
+  tgtPos.set(st.pos[0], st.pos[1], st.pos[2]);
+  tgtLook.set(st.look[0], st.look[1], st.look[2]);
+  if(instant){ camPos.copy(tgtPos); camLook.copy(tgtLook); }
+}
+
+/* ============================================================
+   HUD
+   ============================================================ */
+const $ = id => document.getElementById(id);
+function paintHud(){
+  const room = ROOMS[roomIdx];
+  const shown = room.pieces.length;
+  const pad = L.n - shown;
+  $('rmName').textContent = room.name;
+  $('rmMeta').innerHTML = `<em>${shown}</em> image${shown===1?'':'s'} &middot; ${new Set(room.pieces.map(p=>p.slug)).size} mini`
+    + (new Set(room.pieces.map(p=>p.slug)).size===1?'':'s')
+    + (pad>0 ? ` &middot; ${pad} empty board${pad===1?'':'s'}` : '');
+  $('pos').textContent = (cursor+1) + ' / ' + L.n;
+  document.body.dataset.skin = skinId;
+  $('hintMid').textContent = moveId === 'walk' ? 'WASD to walk' : 'drag to look';
+}
+
+function buildRoomSeg(){
+  const seg = $('roomSeg');
+  ROOMS.forEach((r,i)=>{
+    const b = document.createElement('button');
+    b.textContent = r.name.length > 15 ? r.name.slice(0,13)+'…' : r.name;
+    b.title = r.name;
+    b.setAttribute('aria-pressed', String(i===0));
+    b.addEventListener('click', ()=>{
+      roomIdx = i;
+      [...seg.children].forEach((c,j)=>c.setAttribute('aria-pressed', String(j===i)));
+      closeCard(); buildRoom();
+    });
+    seg.appendChild(b);
+  });
+}
+buildRoomSeg();
+
+$('skinSeg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  skinId = b.dataset.skin;
+  [...$('skinSeg').children].forEach(c=>c.setAttribute('aria-pressed', String(c===b)));
+  const keep = cursor; closeCard(); buildRoom(); cursor = keep; snapCamera(true); paintHud();
+});
+$('moveSeg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  moveId = b.dataset.move;
+  [...$('moveSeg').children].forEach(c=>c.setAttribute('aria-pressed', String(c===b)));
+  if(moveId==='walk'){ walkPos.copy(camPos); tYaw = yaw = 0; }
+  else { snapCamera(false); tYaw = 0; tPitch = 0; }
+  paintHud();
+});
+
+function step(d){
+  cursor = Math.max(0, Math.min(L.n-1, cursor + d));
+  tYaw = 0; tPitch = 0;
+  snapCamera(false); paintHud(); closeCard();
+}
+$('prev').addEventListener('click', ()=>step(-1));
+$('next').addEventListener('click', ()=>step(1));
+
+/* ---- artwork card ---- */
+function openCard(slot){
+  const c = $('card');
+  if(slot.piece){
+    $('cardTitle').textContent = slot.piece.mini;
+    $('cardSub').textContent = ({cover:'Cover image',gallery:'Gallery image',process:'Painting process shot'})[slot.piece.kind];
+    $('cardNote').textContent = `slot ${slot.i+1} · aspect ${slot.piece.ar.toFixed(2)} · /minis/${slot.piece.slug}/`;
+    $('cardSw').style.background = `linear-gradient(140deg, hsl(${slot.piece.hue} 42% 46%), hsl(${slot.piece.hue} 40% 11%))`;
+    $('cardGo').style.display = '';
+  }else{
+    $('cardTitle').textContent = 'Empty board';
+    $('cardSub').textContent = 'This room has fewer than three images, so the layout pads the remaining slots.';
+    $('cardNote').textContent = `slot ${slot.i+1} · no piece assigned`;
+    $('cardSw').style.background = '#08070a';
+    $('cardGo').style.display = 'none';
+  }
+  c.classList.add('open');
+}
+function closeCard(){ $('card').classList.remove('open'); }
+$('cardX').addEventListener('click', closeCard);
+$('cardGo').addEventListener('click', closeCard);
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+addEventListener('keydown', e=>{
+  if(e.target.closest && e.target.closest('input,textarea,select')) return;
+  const k = e.key.toLowerCase();
+  if(moveId==='walk' && ['w','a','s','d','shift'].includes(k)){ keys[k]=true; return; }
+  if(e.key==='ArrowRight'){ e.preventDefault(); step(1); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); step(-1); }
+  else if(e.key==='Enter'){ e.preventDefault(); openCard(L.slots[cursor]); }
+  else if(e.key==='Escape'){ closeCard(); }
+});
+addEventListener('keyup', e=>{ keys[e.key.toLowerCase()] = false; });
+
+// drag to look
+let dragging=false, lastX=0, lastY=0, moved=0;
+const el = renderer.domElement;
+function down(x,y){ dragging=true; lastX=x; lastY=y; moved=0; }
+function move(x,y){
+  if(!dragging) return;
+  const dx=x-lastX, dy=y-lastY; lastX=x; lastY=y; moved+=Math.abs(dx)+Math.abs(dy);
+  tYaw   -= dx * .0035;
+  tPitch -= dy * .0028;
+  const lim = moveId==='walk' ? 1.1 : .62;
+  tYaw   = Math.max(-lim, Math.min(lim, tYaw));
+  tPitch = Math.max(-.5, Math.min(.5, tPitch));
+}
+function up(){ dragging=false; }
+el.addEventListener('pointerdown', e=>{ el.setPointerCapture(e.pointerId); down(e.clientX,e.clientY); });
+el.addEventListener('pointermove', e=>move(e.clientX,e.clientY));
+el.addEventListener('pointerup', e=>{
+  up();
+  if(moved < 6) pick(e.clientX, e.clientY);          // a tap, not a drag
+});
+el.addEventListener('pointercancel', up);
+
+// swipe advances the rail on touch
+let tsx=0, tsy=0;
+el.addEventListener('touchstart', e=>{ tsx=e.touches[0].clientX; tsy=e.touches[0].clientY; }, {passive:true});
+el.addEventListener('touchend', e=>{
+  if(moveId!=='rail') return;
+  const t=e.changedTouches[0], dx=t.clientX-tsx, dy=t.clientY-tsy;
+  if(Math.abs(dx)>70 && Math.abs(dx)>Math.abs(dy)*1.6) step(dx<0 ? 1 : -1);
+}, {passive:true});
+
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function pick(px,py){
+  const r = el.getBoundingClientRect();
+  ndc.x = ((px-r.left)/r.width)*2-1;
+  ndc.y = -((py-r.top)/r.height)*2+1;
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(boards.map(b=>b.mesh), false)[0];
+  if(hit){
+    const b = boards.find(b=>b.mesh===hit.object);
+    if(moveId==='rail'){ cursor = b.slot.i; snapCamera(false); paintHud(); }
+    openCard(b.slot);
+  }
+}
+
+/* ============================================================
+   LOOP
+   ============================================================ */
+let last = performance.now();
+const fwd = new THREE.Vector3(), rgt = new THREE.Vector3(), lookAt = new THREE.Vector3();
+
+function frame(now){
+  const dt = Math.min(.05, (now-last)/1000); last = now;
+  yaw   += (tYaw   - yaw)   * Math.min(1, dt*9);
+  pitch += (tPitch - pitch) * Math.min(1, dt*9);
+
+  if(moveId === 'walk'){
+    const sp = (keys['shift'] ? 5.2 : 2.6) * dt;
+    fwd.set(-Math.sin(yaw), 0, -Math.cos(yaw));
+    rgt.set(Math.cos(yaw), 0, -Math.sin(yaw));
+    if(keys['w']) walkPos.addScaledVector(fwd, sp);
+    if(keys['s']) walkPos.addScaledVector(fwd,-sp);
+    if(keys['d']) walkPos.addScaledVector(rgt, sp);
+    if(keys['a']) walkPos.addScaledVector(rgt,-sp);
+    // soft bounds so you can't wander behind the dungeon walls
+    const lim = WALL_X - .55, D = L.depth + SPAN;
+    walkPos.x = Math.max(-lim, Math.min(lim, walkPos.x));
+    walkPos.z = Math.max(-D + 2.2, Math.min(2.4, walkPos.z));
+    walkPos.y = EYE;
+    camera.position.copy(walkPos);
+    lookAt.copy(walkPos).add(fwd).setY(EYE + Math.sin(pitch)*2.2);
+    camera.lookAt(lookAt);
+  }else{
+    camPos.lerp(tgtPos, Math.min(1, dt*3.6));
+    camLook.lerp(tgtLook, Math.min(1, dt*3.6));
+    camera.position.copy(camPos);
+    // free look = rotate the aim point around the camera
+    const off = new THREE.Vector3().subVectors(camLook, camPos);
+    off.applyAxisAngle(new THREE.Vector3(0,1,0), yaw);
+    off.y += Math.sin(pitch) * off.length() * .9;
+    camera.lookAt(new THREE.Vector3().addVectors(camPos, off));
+  }
+
+  // torch flicker — dungeon only
+  if(lightRig && lightRig.flicker){
+    const t = now * .004;
+    lightRig.lights.forEach((o,i)=>{
+      o.l.intensity = o.base * (.86 + Math.sin(t + i*2.1)*.05 + Math.sin(t*2.7 + i)*.055);
+    });
+  }
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w,h,false);
+  camera.aspect = w/h;
+  camera.fov = w < 640 ? 68 : 58;      // wider on phones so a board still fits
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+
+resize();
+buildRoom();
+requestAnimationFrame(frame);
+setTimeout(()=>$('boot').classList.add('gone'), 420);
+
+})();
+</script>
