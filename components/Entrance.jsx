@@ -108,7 +108,7 @@ export default function Entrance({ entranceMinis, rooms }) {
             >
               <div className="frame-mat">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={asset(current.cover)} alt={current.name} />
+                <img src={asset(current.cover?.src)} alt={current.name} />
               </div>
             </div>
           )}
@@ -173,7 +173,7 @@ export default function Entrance({ entranceMinis, rooms }) {
                 <div className="door-frame">
                   <div className="door-mat">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={asset(room.previewImage)} alt={room.name} loading="lazy" />
+                    <img src={asset(room.previewImage?.src)} alt={room.name} loading="lazy" />
                   </div>
                 </div>
                 <span className="door-plaque">
@@ -197,7 +197,7 @@ export default function Entrance({ entranceMinis, rooms }) {
             <div className="frame lightbox-frame">
               <div className="frame-mat">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={asset(current.cover)} alt={current.name} />
+                <img src={asset(current.cover?.src)} alt={current.name} />
               </div>
             </div>
             <div className="lightbox-caption">

@@ -225,7 +225,7 @@ export default function Gallery({ minis }) {
               <div className="frame">
                 <div className="frame-mat">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={asset(m.thumb ?? m.cover)} alt={m.name} loading="lazy" />
+                  <img src={asset((m.thumb ?? m.cover)?.src)} alt={m.name} loading="lazy" />
                 </div>
                 {m.forSale && (
                   <span className="badge">
@@ -269,7 +269,7 @@ function Lightbox({ mini, detailsFocus, onClose, onPrev, onNext, hasPrev, hasNex
         <div className="frame lightbox-frame">
           <div className="frame-mat">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={asset(mini.cover)} alt={mini.name} />
+            <img src={asset(mini.cover?.src)} alt={mini.name} />
           </div>
         </div>
         <div className="lightbox-caption">

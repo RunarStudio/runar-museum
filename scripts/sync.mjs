@@ -136,23 +136,42 @@ async function readManifest() {
   }
 }
 
-async function downloadAndOptimize(url, destBase, { thumb = false } = {}) {
+// Returns pixel dimensions of each variant written, so callers can embed
+// { w, h } in minis.json without a texture ever needing to load first.
+async function downloadAndOptimize(url, destBase, { thumb = false, board = false } = {}) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Download failed (${res.status}): ${url.split('?')[0]}`);
   const input = Buffer.from(await res.arrayBuffer());
   const img = sharp(input, { density: 150 }); // density helps SVG rasterization
-  await img
+  const main = await img
     .clone()
     .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
     .webp({ quality: 82 })
     .toFile(`${destBase}.webp`);
+  const out = { w: main.width, h: main.height };
   if (thumb) {
-    await img
+    const t = await img
       .clone()
       .resize({ width: 480, height: 480, fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 75 })
       .toFile(`${destBase}-thumb.webp`);
+    out.thumbW = t.width;
+    out.thumbH = t.height;
   }
+  if (board) {
+    // Lower-res variant for 3D textures — full-res detail is wasted on a wall board.
+    await img
+      .clone()
+      .resize({ width: 1024, height: 1024, fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toFile(`${destBase}-board.webp`);
+  }
+  return out;
+}
+
+async function fileDims(filePath) {
+  const meta = await sharp(filePath).metadata();
+  return { w: meta.width, h: meta.height };
 }
 
 async function main() {
@@ -182,13 +201,28 @@ async function main() {
       newManifest[key] = f.stableId;
       const outFile = path.join(dir, 'cover.webp');
       const exists = await fs.access(outFile).then(() => true, () => false);
+      let dims;
       if (manifest[key] !== f.stableId || !exists) {
         await fs.mkdir(dir, { recursive: true });
         console.log(`  ↓ ${key}`);
-        await downloadAndOptimize(f.url, path.join(dir, 'cover'), { thumb: true });
+        dims = await downloadAndOptimize(f.url, path.join(dir, 'cover'), { thumb: true, board: true });
+      } else {
+        dims = { ...(await fileDims(outFile)) };
+        const t = await fileDims(path.join(dir, 'cover-thumb.webp'));
+        dims.thumbW = t.w;
+        dims.thumbH = t.h;
       }
-      mini.cover = `images/${mini.slug}/cover.webp`;
-      mini.thumb = `images/${mini.slug}/cover-thumb.webp`;
+      mini.cover = {
+        src: `images/${mini.slug}/cover.webp`,
+        w: dims.w,
+        h: dims.h,
+        board: `images/${mini.slug}/cover-board.webp`,
+      };
+      mini.thumb = {
+        src: `images/${mini.slug}/cover-thumb.webp`,
+        w: dims.thumbW,
+        h: dims.thumbH,
+      };
     } else {
       mini.cover = null;
       mini.thumb = null;
@@ -202,12 +236,20 @@ async function main() {
       newManifest[key] = f.stableId;
       const outFile = path.join(dir, `photo-${i + 1}.webp`);
       const exists = await fs.access(outFile).then(() => true, () => false);
+      let dims;
       if (manifest[key] !== f.stableId || !exists) {
         await fs.mkdir(dir, { recursive: true });
         console.log(`  ↓ ${key}`);
-        await downloadAndOptimize(f.url, path.join(dir, `photo-${i + 1}`));
+        dims = await downloadAndOptimize(f.url, path.join(dir, `photo-${i + 1}`), { board: true });
+      } else {
+        dims = await fileDims(outFile);
       }
-      mini.gallery.push(`images/${mini.slug}/photo-${i + 1}.webp`);
+      mini.gallery.push({
+        src: `images/${mini.slug}/photo-${i + 1}.webp`,
+        w: dims.w,
+        h: dims.h,
+        board: `images/${mini.slug}/photo-${i + 1}-board.webp`,
+      });
     }
 
     mini.process = [];
@@ -217,12 +259,19 @@ async function main() {
       newManifest[key] = f.stableId;
       const outFile = path.join(dir, `wip-${i + 1}.webp`);
       const exists = await fs.access(outFile).then(() => true, () => false);
+      let dims;
       if (manifest[key] !== f.stableId || !exists) {
         await fs.mkdir(dir, { recursive: true });
         console.log(`  ↓ ${key}`);
-        await downloadAndOptimize(f.url, path.join(dir, `wip-${i + 1}`));
+        dims = await downloadAndOptimize(f.url, path.join(dir, `wip-${i + 1}`));
+      } else {
+        dims = await fileDims(outFile);
       }
-      mini.process.push(`images/${mini.slug}/wip-${i + 1}.webp`);
+      mini.process.push({
+        src: `images/${mini.slug}/wip-${i + 1}.webp`,
+        w: dims.w,
+        h: dims.h,
+      });
     }
 
     delete mini.coverFiles;

@@ -14,17 +14,66 @@
     "forSale": false,
     "price": null,
     "notes": "Trench crusade diorama build for black chalice compettition",
-    "cover": "images/trench-wars-diorama/cover.webp",
-    "thumb": "images/trench-wars-diorama/cover-thumb.webp",
+    "cover": {
+      "src": "images/trench-wars-diorama/cover.webp",
+      "w": 1600,
+      "h": 1200,
+      "board": "images/trench-wars-diorama/cover-board.webp"
+    },
+    "thumb": {
+      "src": "images/trench-wars-diorama/cover-thumb.webp",
+      "w": 480,
+      "h": 360
+    },
     "gallery": [
-      "images/trench-wars-diorama/photo-1.webp",
-      "images/trench-wars-diorama/photo-2.webp",
-      "images/trench-wars-diorama/photo-3.webp",
-      "images/trench-wars-diorama/photo-4.webp",
-      "images/trench-wars-diorama/photo-5.webp",
-      "images/trench-wars-diorama/photo-6.webp",
-      "images/trench-wars-diorama/photo-7.webp",
-      "images/trench-wars-diorama/photo-8.webp"
+      {
+        "src": "images/trench-wars-diorama/photo-1.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-1-board.webp"
+      },
+      {
+        "src": "images/trench-wars-diorama/photo-2.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-2-board.webp"
+      },
+      {
+        "src": "images/trench-wars-diorama/photo-3.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-3-board.webp"
+      },
+      {
+        "src": "images/trench-wars-diorama/photo-4.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-4-board.webp"
+      },
+      {
+        "src": "images/trench-wars-diorama/photo-5.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-5-board.webp"
+      },
+      {
+        "src": "images/trench-wars-diorama/photo-6.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-6-board.webp"
+      },
+      {
+        "src": "images/trench-wars-diorama/photo-7.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-7-board.webp"
+      },
+      {
+        "src": "images/trench-wars-diorama/photo-8.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-wars-diorama/photo-8-board.webp"
+      }
     ],
     "process": []
   },
@@ -43,22 +92,82 @@
     "forSale": false,
     "price": null,
     "notes": "Painted with a bloody idea in mind, presented in the Black chalice competition on june 30-2026",
-    "cover": "images/blood-naval-witch/cover.webp",
-    "thumb": "images/blood-naval-witch/cover-thumb.webp",
+    "cover": {
+      "src": "images/blood-naval-witch/cover.webp",
+      "w": 1600,
+      "h": 1200,
+      "board": "images/blood-naval-witch/cover-board.webp"
+    },
+    "thumb": {
+      "src": "images/blood-naval-witch/cover-thumb.webp",
+      "w": 480,
+      "h": 360
+    },
     "gallery": [
-      "images/blood-naval-witch/photo-1.webp",
-      "images/blood-naval-witch/photo-2.webp",
-      "images/blood-naval-witch/photo-3.webp",
-      "images/blood-naval-witch/photo-4.webp",
-      "images/blood-naval-witch/photo-5.webp",
-      "images/blood-naval-witch/photo-6.webp",
-      "images/blood-naval-witch/photo-7.webp"
+      {
+        "src": "images/blood-naval-witch/photo-1.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/blood-naval-witch/photo-1-board.webp"
+      },
+      {
+        "src": "images/blood-naval-witch/photo-2.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/blood-naval-witch/photo-2-board.webp"
+      },
+      {
+        "src": "images/blood-naval-witch/photo-3.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/blood-naval-witch/photo-3-board.webp"
+      },
+      {
+        "src": "images/blood-naval-witch/photo-4.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/blood-naval-witch/photo-4-board.webp"
+      },
+      {
+        "src": "images/blood-naval-witch/photo-5.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/blood-naval-witch/photo-5-board.webp"
+      },
+      {
+        "src": "images/blood-naval-witch/photo-6.webp",
+        "w": 739,
+        "h": 1600,
+        "board": "images/blood-naval-witch/photo-6-board.webp"
+      },
+      {
+        "src": "images/blood-naval-witch/photo-7.webp",
+        "w": 739,
+        "h": 1600,
+        "board": "images/blood-naval-witch/photo-7-board.webp"
+      }
     ],
     "process": [
-      "images/blood-naval-witch/wip-1.webp",
-      "images/blood-naval-witch/wip-2.webp",
-      "images/blood-naval-witch/wip-3.webp",
-      "images/blood-naval-witch/wip-4.webp"
+      {
+        "src": "images/blood-naval-witch/wip-1.webp",
+        "w": 1600,
+        "h": 1200
+      },
+      {
+        "src": "images/blood-naval-witch/wip-2.webp",
+        "w": 1600,
+        "h": 1200
+      },
+      {
+        "src": "images/blood-naval-witch/wip-3.webp",
+        "w": 1600,
+        "h": 1200
+      },
+      {
+        "src": "images/blood-naval-witch/wip-4.webp",
+        "w": 1600,
+        "h": 1200
+      }
     ]
   },
   {
@@ -78,14 +187,36 @@
     "forSale": false,
     "price": null,
     "notes": "Resized to be in a 40mm base.",
-    "cover": "images/this-demon-is-ready-to-have-fun-in-the-table/cover.webp",
-    "thumb": "images/this-demon-is-ready-to-have-fun-in-the-table/cover-thumb.webp",
+    "cover": {
+      "src": "images/this-demon-is-ready-to-have-fun-in-the-table/cover.webp",
+      "w": 1600,
+      "h": 1200,
+      "board": "images/this-demon-is-ready-to-have-fun-in-the-table/cover-board.webp"
+    },
+    "thumb": {
+      "src": "images/this-demon-is-ready-to-have-fun-in-the-table/cover-thumb.webp",
+      "w": 480,
+      "h": 360
+    },
     "gallery": [
-      "images/this-demon-is-ready-to-have-fun-in-the-table/photo-1.webp"
+      {
+        "src": "images/this-demon-is-ready-to-have-fun-in-the-table/photo-1.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/this-demon-is-ready-to-have-fun-in-the-table/photo-1-board.webp"
+      }
     ],
     "process": [
-      "images/this-demon-is-ready-to-have-fun-in-the-table/wip-1.webp",
-      "images/this-demon-is-ready-to-have-fun-in-the-table/wip-2.webp"
+      {
+        "src": "images/this-demon-is-ready-to-have-fun-in-the-table/wip-1.webp",
+        "w": 1600,
+        "h": 1200
+      },
+      {
+        "src": "images/this-demon-is-ready-to-have-fun-in-the-table/wip-2.webp",
+        "w": 1600,
+        "h": 1200
+      }
     ]
   }
 ]

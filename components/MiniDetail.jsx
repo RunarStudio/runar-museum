@@ -17,6 +17,7 @@ export default function MiniDetail({ mini }) {
 
   // All showcase media: cover first, then any images from the Notion page body
   const media = mini ? [mini.cover, ...(mini.gallery ?? [])].filter(Boolean) : [];
+  const heroSrc = media[heroIndex]?.src ?? null;
 
   useEffect(() => {
     const onKey = (e) => {
@@ -93,20 +94,20 @@ export default function MiniDetail({ mini }) {
           <div className="frame detail-frame">
             <div className="frame-mat">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={asset(media[heroIndex] ?? null)} alt={mini.name} />
+              <img src={asset(heroSrc)} alt={mini.name} />
             </div>
           </div>
           {media.length > 1 && (
             <div className="media-strip">
-              {media.map((src, i) => (
+              {media.map((img, i) => (
                 <button
-                  key={src}
+                  key={img.src}
                   className={i === heroIndex ? 'media-thumb active' : 'media-thumb'}
                   onClick={() => setHeroIndex(i)}
                   aria-label={`${mini.name} — photo ${i + 1}`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={asset(src)} alt="" loading="lazy" />
+                  <img src={asset(img.src)} alt="" loading="lazy" />
                 </button>
               ))}
             </div>
@@ -153,10 +154,10 @@ export default function MiniDetail({ mini }) {
         <section className="process">
           <h2>{t('process_title')}</h2>
           <ol className="process-steps">
-            {mini.process.map((src, i) => (
-              <li key={src}>
+            {mini.process.map((img, i) => (
+              <li key={img.src}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={asset(src)} alt={`${mini.name} — WIP ${i + 1}`} loading="lazy" />
+                <img src={asset(img.src)} alt={`${mini.name} — WIP ${i + 1}`} loading="lazy" />
                 <span className="step-number">{i + 1}</span>
               </li>
             ))}
