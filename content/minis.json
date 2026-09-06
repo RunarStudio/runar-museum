@@ -238,9 +238,139 @@
     "forSale": false,
     "price": null,
     "notes": "",
-    "cover": null,
-    "thumb": null,
-    "gallery": [],
+    "cover": {
+      "src": "images/frostgrave-partida-2/cover.webp",
+      "w": 1600,
+      "h": 1200,
+      "board": "images/frostgrave-partida-2/cover-board.webp"
+    },
+    "thumb": {
+      "src": "images/frostgrave-partida-2/cover-thumb.webp",
+      "w": 480,
+      "h": 360
+    },
+    "gallery": [
+      {
+        "src": "images/frostgrave-partida-2/photo-1.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-1-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-2.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-2-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-3.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-3-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-4.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-4-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-5.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-5-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-6.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-6-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-7.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-7-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-8.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-8-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-9.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-9-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-10.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-10-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-11.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/frostgrave-partida-2/photo-11-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-12.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-12-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-13.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-13-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-14.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-14-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-15.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-15-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-16.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-16-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-17.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-17-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-18.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-18-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-19.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-19-board.webp"
+      },
+      {
+        "src": "images/frostgrave-partida-2/photo-20.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/frostgrave-partida-2/photo-20-board.webp"
+      }
+    ],
     "process": []
   },
   {
@@ -256,9 +386,115 @@
     "forSale": false,
     "price": null,
     "notes": "",
-    "cover": null,
-    "thumb": null,
-    "gallery": [],
+    "cover": {
+      "src": "images/hametsu-casual-games/cover.webp",
+      "w": 1600,
+      "h": 1108,
+      "board": "images/hametsu-casual-games/cover-board.webp"
+    },
+    "thumb": {
+      "src": "images/hametsu-casual-games/cover-thumb.webp",
+      "w": 480,
+      "h": 332
+    },
+    "gallery": [
+      {
+        "src": "images/hametsu-casual-games/photo-1.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/hametsu-casual-games/photo-1-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-2.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-2-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-3.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-3-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-4.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-4-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-5.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-5-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-6.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-6-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-7.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-7-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-8.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-8-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-9.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-9-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-10.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/hametsu-casual-games/photo-10-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-11.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-11-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-12.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/hametsu-casual-games/photo-12-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-13.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-13-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-14.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/hametsu-casual-games/photo-14-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-15.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/hametsu-casual-games/photo-15-board.webp"
+      },
+      {
+        "src": "images/hametsu-casual-games/photo-16.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/hametsu-casual-games/photo-16-board.webp"
+      }
+    ],
     "process": []
   },
   {
@@ -274,9 +510,91 @@
     "forSale": false,
     "price": null,
     "notes": "This is a Photoshoot of the 5 game of trench crusade",
-    "cover": null,
-    "thumb": null,
-    "gallery": [],
+    "cover": {
+      "src": "images/trench-crusade-campaign-game-5/cover.webp",
+      "w": 1600,
+      "h": 1421,
+      "board": "images/trench-crusade-campaign-game-5/cover-board.webp"
+    },
+    "thumb": {
+      "src": "images/trench-crusade-campaign-game-5/cover-thumb.webp",
+      "w": 480,
+      "h": 426
+    },
+    "gallery": [
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-1.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-1-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-2.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-crusade-campaign-game-5/photo-2-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-3.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-crusade-campaign-game-5/photo-3-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-4.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-crusade-campaign-game-5/photo-4-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-5.webp",
+        "w": 1600,
+        "h": 1200,
+        "board": "images/trench-crusade-campaign-game-5/photo-5-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-6.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-6-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-7.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-7-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-8.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-8-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-9.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-9-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-10.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-10-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-11.webp",
+        "w": 1200,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-11-board.webp"
+      },
+      {
+        "src": "images/trench-crusade-campaign-game-5/photo-12.webp",
+        "w": 1411,
+        "h": 1600,
+        "board": "images/trench-crusade-campaign-game-5/photo-12-board.webp"
+      }
+    ],
     "process": []
   }
 ]
