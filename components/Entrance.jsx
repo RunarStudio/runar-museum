@@ -186,6 +186,7 @@ export default function Entrance({ entranceMinis, rooms }) {
             ))}
           </div>
           <p className="view-all-line">
+            <Link href="/museum/">{t('museum_enter')} →</Link>
             <Link href="/all/">{t('view_all')} →</Link>
           </p>
         </section>

@@ -176,6 +176,34 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
     if (narrow && moveId === 'walk') setMoveId('rail');
   }, [narrow, moveId]);
 
+  function exitMuseum() {
+    router.push('/');
+  }
+
+  // The museum covers the viewport, so the page behind it must not scroll
+  // under the canvas while a drag-to-look gesture is in progress.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  // Esc backs out one level: it closes an open card (handled by the rail
+  // controls), and otherwise leaves the museum entirely. Without this a
+  // full-viewport canvas has no keyboard escape at all.
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key !== 'Escape') return;
+      if (card !== undefined) return;
+      if (e.target?.closest && e.target.closest('input, textarea, select')) return;
+      exitMuseum();
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [card]);
+
   // Renderer + scene: created once WebGL is confirmed available, torn
   // down on unmount. Room/skin/control changes below reuse this world.
   useEffect(() => {
@@ -333,7 +361,11 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
       <div className="museum-stage" ref={mountRef} />
 
       <div className="museum-hud museum-top">
-        <div className="museum-brand">{t('museum_title')}</div>
+        <div className="museum-brand">
+          <button className="museum-exit" onClick={exitMuseum} aria-label={t('museum_exit')}>
+            <span aria-hidden="true">←</span> {t('museum_exit')}
+          </button>
+        </div>
         <div className="museum-controls">
           <div className="museum-row">
             <span className="museum-ctrl-label">{t('museum_skin')}</span>
@@ -382,21 +414,21 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
 
       {moveId === 'rail' && (
         <div className="museum-hud museum-rail">
-          <button className="museum-arrow" onClick={goPrev} aria-label="Previous">
+          <button className="museum-arrow" onClick={goPrev} aria-label={t('museum_prev')}>
             ‹
           </button>
           <span className="museum-pos">
             {cursorPos + 1} / {hud.n}
           </span>
-          <button className="museum-arrow" onClick={goNext} aria-label="Next">
+          <button className="museum-arrow" onClick={goNext} aria-label={t('museum_next')}>
             ›
           </button>
         </div>
       )}
 
-      {moveId === 'rail' && (
-        <div className="museum-hud museum-hint">{narrow ? t('museum_hint_mobile') : t('museum_hint_desktop')}</div>
-      )}
+      <div className="museum-hud museum-hint">
+        {moveId === 'walk' ? t('museum_hint_walk') : narrow ? t('museum_hint_mobile') : t('museum_hint_desktop')}
+      </div>
 
       {zonesVisible && moveId === 'rail' && (
         <div className="museum-tap-zones" aria-hidden="true">
