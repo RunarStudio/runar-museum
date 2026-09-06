@@ -6,3 +6,7 @@ out/
 *.log
 .DS_Store
 .playwright-mcp/
+
+# Claude Code local state (worktrees are checkouts, not source)
+.claude/
+AGENTS.md
