@@ -224,5 +224,59 @@
         "board": "images/this-demon-is-ready-to-have-fun-in-the-table/wip-2-board.webp"
       }
     ]
+  },
+  {
+    "id": "3d39d707-fb3c-80b2-bf9a-f889d18917a4",
+    "slug": "frostgrave-partida-2",
+    "name": "Frostgrave partida 2",
+    "warband": "Axolot army",
+    "game": "Frostgrave",
+    "topics": [],
+    "techniques": [],
+    "room": "In Game shoots",
+    "datePainted": null,
+    "forSale": false,
+    "price": null,
+    "notes": "",
+    "cover": null,
+    "thumb": null,
+    "gallery": [],
+    "process": []
+  },
+  {
+    "id": "3d39d707-fb3c-80da-a982-c0cfa0d1cf6d",
+    "slug": "hametsu-casual-games",
+    "name": "Hametsu casual games",
+    "warband": "Other",
+    "game": "Hametsu",
+    "topics": [],
+    "techniques": [],
+    "room": "In Game shoots",
+    "datePainted": null,
+    "forSale": false,
+    "price": null,
+    "notes": "",
+    "cover": null,
+    "thumb": null,
+    "gallery": [],
+    "process": []
+  },
+  {
+    "id": "3d39d707-fb3c-80b6-812c-d066c9c76f22",
+    "slug": "trench-crusade-campaign-game-5",
+    "name": "Trench Crusade Campaign Game 5",
+    "warband": "7 Rings of hell",
+    "game": "Trench crusade",
+    "topics": [],
+    "techniques": [],
+    "room": "In Game shoots",
+    "datePainted": null,
+    "forSale": false,
+    "price": null,
+    "notes": "This is a Photoshoot of the 5 game of trench crusade",
+    "cover": null,
+    "thumb": null,
+    "gallery": [],
+    "process": []
   }
 ]
