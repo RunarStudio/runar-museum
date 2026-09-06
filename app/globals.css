@@ -1555,3 +1555,35 @@ body::after {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* Room switcher is a stepper rather than one button per room: room names are
+   long, and a segmented control grew wider with every room until it crowded
+   the view. Fixed width whatever the room count. */
+.museum-stepper {
+  align-items: stretch;
+}
+
+.museum-stepper-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 11.5rem;
+  padding: 0 0.75rem;
+  font-family: sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  line-height: 1.2;
+}
+
+@media (max-width: 720px) {
+  .museum-stepper-value {
+    min-width: 7.5rem;
+    font-size: 0.65rem;
+  }
+}

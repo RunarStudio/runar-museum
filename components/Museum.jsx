@@ -213,6 +213,12 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
     if (narrow && moveId === 'walk') setMoveId('rail');
   }, [narrow, moveId]);
 
+  function stepRoom(dir) {
+    const i = rooms.findIndex((r) => r.slug === roomSlug);
+    const next = ((i + dir) % rooms.length + rooms.length) % rooms.length;
+    setRoomSlug(rooms[next].slug);
+  }
+
   function exitMuseum() {
     router.push('/');
   }
@@ -469,12 +475,18 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
           {rooms.length > 1 && (
             <div className="museum-row">
               <span className="museum-ctrl-label">{t('museum_room')}</span>
-              <div className="museum-seg">
-                {rooms.map((r) => (
-                  <button key={r.slug} aria-pressed={roomSlug === r.slug} onClick={() => setRoomSlug(r.slug)}>
-                    {r.name}
-                  </button>
-                ))}
+              {/* A stepper, not one button per room: room names are long and a
+                  segmented control grew wider with every room added until it
+                  crowded the view. This stays one fixed size however many
+                  rooms exist, and wraps at both ends like the rail does. */}
+              <div className="museum-seg museum-stepper">
+                <button onClick={() => stepRoom(-1)} aria-label={t('museum_room_prev')}>
+                  &#8249;
+                </button>
+                <span className="museum-stepper-value">{rooms.find((r) => r.slug === roomSlug)?.name}</span>
+                <button onClick={() => stepRoom(1)} aria-label={t('museum_room_next')}>
+                  &#8250;
+                </button>
               </div>
             </div>
           )}
