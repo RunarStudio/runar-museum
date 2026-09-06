@@ -255,6 +255,10 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
       world.controls?.update(dt);
       if (world.skin && world.layoutResult) {
         updateTextures(world, world.skin, world.moveId ?? 'rail', world.layoutResult);
+        // A skin may animate itself (matrix's glyph rain and color cycle).
+        // It gets the scene so it can drive fog and background too, which
+        // aren't reachable from the root group it built into.
+        world.lightRig?.update?.(dt, now / 1000, world.scene);
         if (world.lightRig?.flicker) {
           const tt = now * 0.004;
           world.lightRig.lights.forEach((o, i) => {
