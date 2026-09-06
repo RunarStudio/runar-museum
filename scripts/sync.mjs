@@ -10,6 +10,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import heicConvert from 'heic-convert';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT_DIR = path.join(ROOT, 'content');
@@ -138,11 +139,29 @@ async function readManifest() {
 
 // Returns pixel dimensions of each variant written, so callers can embed
 // { w, h } in minis.json without a texture ever needing to load first.
+// sharp's bundled libheif refuses many iPhone HEIC files outright: Apple
+// writes more references in the iref box than libheif's compiled-in security
+// limit of 16 allows, and there's no way to raise that limit through sharp.
+// The files are perfectly valid photos, so rather than make anyone re-shoot
+// or re-export them, decode HEIC with a separate pure-JS decoder that has no
+// such limit and hand the raw pixels to sharp.
+async function decodeToSharp(input) {
+  try {
+    const img = sharp(input, { density: 150 }); // density helps SVG rasterization
+    await img.metadata(); // forces a header read, so a bad HEIC fails here
+    return img;
+  } catch (err) {
+    if (!/heif|heic/i.test(String(err.message))) throw err;
+    const jpeg = await heicConvert({ buffer: input, format: 'JPEG', quality: 0.94 });
+    return sharp(Buffer.from(jpeg));
+  }
+}
+
 async function downloadAndOptimize(url, destBase, { thumb = false, board = false } = {}) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Download failed (${res.status}): ${url.split('?')[0]}`);
   const input = Buffer.from(await res.arrayBuffer());
-  const img = sharp(input, { density: 150 }); // density helps SVG rasterization
+  const img = await decodeToSharp(input);
   const main = await img
     .clone()
     .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
