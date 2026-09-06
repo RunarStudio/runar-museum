@@ -169,6 +169,24 @@ async function downloadAndOptimize(url, destBase, { thumb = false, board = false
   return out;
 }
 
+// One unreadable photo must never block the whole site's content. Notion
+// accepts whatever a phone uploads, and some of it sharp cannot decode —
+// notably iPhone HEIC files that trip libheif's reference-count security
+// limit. Before this, the first such file aborted the entire sync, so every
+// other mini silently stopped updating too. Now the bad image is skipped and
+// named in the log, and everything else still publishes.
+const skipped = [];
+async function tryOptimize(url, destBase, opts, label) {
+  try {
+    return await downloadAndOptimize(url, destBase, opts);
+  } catch (err) {
+    const [reason] = String(err.message).split(/\r?\n/);
+    skipped.push({ label, reason });
+    console.warn(`  ! skipped ${label}: ${reason}`);
+    return null;
+  }
+}
+
 async function fileDims(filePath) {
   const meta = await sharp(filePath).metadata();
   return { w: meta.width, h: meta.height };
@@ -205,24 +223,32 @@ async function main() {
       if (manifest[key] !== f.stableId || !exists) {
         await fs.mkdir(dir, { recursive: true });
         console.log(`  ↓ ${key}`);
-        dims = await downloadAndOptimize(f.url, path.join(dir, 'cover'), { thumb: true, board: true });
+        dims = await tryOptimize(f.url, path.join(dir, 'cover'), { thumb: true, board: true }, key);
       } else {
         dims = { ...(await fileDims(outFile)) };
         const t = await fileDims(path.join(dir, 'cover-thumb.webp'));
         dims.thumbW = t.w;
         dims.thumbH = t.h;
       }
-      mini.cover = {
-        src: `images/${mini.slug}/cover.webp`,
-        w: dims.w,
-        h: dims.h,
-        board: `images/${mini.slug}/cover-board.webp`,
-      };
-      mini.thumb = {
-        src: `images/${mini.slug}/cover-thumb.webp`,
-        w: dims.thumbW,
-        h: dims.thumbH,
-      };
+      if (dims) {
+        mini.cover = {
+          src: `images/${mini.slug}/cover.webp`,
+          w: dims.w,
+          h: dims.h,
+          board: `images/${mini.slug}/cover-board.webp`,
+        };
+        mini.thumb = {
+          src: `images/${mini.slug}/cover-thumb.webp`,
+          w: dims.thumbW,
+          h: dims.thumbH,
+        };
+      } else {
+        // Undecodable: leave it unrecorded so the next sync retries it rather
+        // than treating the missing file as already up to date.
+        delete newManifest[key];
+        mini.cover = null;
+        mini.thumb = null;
+      }
     } else {
       mini.cover = null;
       mini.thumb = null;
@@ -240,9 +266,13 @@ async function main() {
       if (manifest[key] !== f.stableId || !exists) {
         await fs.mkdir(dir, { recursive: true });
         console.log(`  ↓ ${key}`);
-        dims = await downloadAndOptimize(f.url, path.join(dir, `photo-${i + 1}`), { board: true });
+        dims = await tryOptimize(f.url, path.join(dir, `photo-${i + 1}`), { board: true }, key);
       } else {
         dims = await fileDims(outFile);
+      }
+      if (!dims) {
+        delete newManifest[key]; // retry this one next sync
+        continue;
       }
       mini.gallery.push({
         src: `images/${mini.slug}/photo-${i + 1}.webp`,
@@ -263,9 +293,13 @@ async function main() {
       if (manifest[key] !== f.stableId || !exists) {
         await fs.mkdir(dir, { recursive: true });
         console.log(`  ↓ ${key}`);
-        dims = await downloadAndOptimize(f.url, path.join(dir, `wip-${i + 1}`), { board: true });
+        dims = await tryOptimize(f.url, path.join(dir, `wip-${i + 1}`), { board: true }, key);
       } else {
         dims = await fileDims(outFile);
+      }
+      if (!dims) {
+        delete newManifest[key]; // retry this one next sync
+        continue;
       }
       mini.process.push({
         src: `images/${mini.slug}/wip-${i + 1}.webp`,
@@ -301,6 +335,16 @@ async function main() {
   await fs.writeFile(path.join(CONTENT_DIR, 'minis.json'), JSON.stringify(minis, null, 2));
   await fs.writeFile(MANIFEST_PATH, JSON.stringify(newManifest, null, 2));
   console.log(`Wrote content/minis.json (${minis.length} minis).`);
+
+  // Surface skips loudly at the end. Buried mid-log they'd go unnoticed for
+  // weeks, and a silently missing photo is the whole reason this sync used
+  // to fail hard instead.
+  if (skipped.length > 0) {
+    console.warn(`
+${skipped.length} image(s) could not be processed and were left out:`);
+    for (const s2 of skipped) console.warn(`  - ${s2.label}: ${s2.reason}`);
+    console.warn('Re-upload these to Notion as JPEG or PNG (HEIC from an iPhone is the usual cause).');
+  }
 }
 
 main().catch((err) => {
