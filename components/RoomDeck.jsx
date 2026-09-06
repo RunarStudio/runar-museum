@@ -22,6 +22,7 @@ export default function RoomDeck({ roomName, minis }) {
   const n = minis.length;
   const mini = minis[idx];
   const media = mini ? [mini.cover, ...(mini.gallery ?? []), ...(mini.process ?? [])].filter(Boolean) : [];
+  const mediaSrc = media[mediaIdx]?.src ?? null;
 
   const advance = (dir) => {
     const next = idx + dir;
@@ -144,7 +145,7 @@ export default function RoomDeck({ roomName, minis }) {
             <div className="frame deck-frame">
               <div className="frame-mat">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={asset(media[mediaIdx] ?? null)} alt={mini.name} draggable={false} />
+                <img src={asset(mediaSrc)} alt={mini.name} draggable={false} />
               </div>
               {mini.forSale && (
                 <span className="badge">
@@ -157,9 +158,9 @@ export default function RoomDeck({ roomName, minis }) {
 
           {media.length > 1 && (
             <div className="dots">
-              {media.map((src, i) => (
+              {media.map((img, i) => (
                 <button
-                  key={src}
+                  key={img.src}
                   className={i === mediaIdx ? 'dot active' : 'dot'}
                   aria-label={`Photo ${i + 1}`}
                   onClick={() => setMediaIdx(i)}
@@ -184,7 +185,7 @@ export default function RoomDeck({ roomName, minis }) {
           .filter(Boolean)
           .map((m) =>
             // eslint-disable-next-line @next/next/no-img-element
-            m.cover ? <img key={m.slug} src={asset(m.cover)} alt="" /> : null
+            m.cover ? <img key={m.slug} src={asset(m.cover.src)} alt="" /> : null
           )}
       </div>
     </div>
@@ -197,7 +198,7 @@ function PeekCard({ mini, side }) {
       <div className="frame deck-frame">
         <div className="frame-mat">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset(mini.thumb ?? mini.cover)} alt="" draggable={false} />
+          <img src={asset((mini.thumb ?? mini.cover)?.src)} alt="" draggable={false} />
         </div>
       </div>
     </div>

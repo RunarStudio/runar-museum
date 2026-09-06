@@ -1006,6 +1006,9 @@ body::after {
 .view-all-line {
   margin-top: 2rem;
   font-size: 0.95rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.6rem;
 }
 
 /* ===== Room deck ===== */
@@ -1154,4 +1157,347 @@ body::after {
   text-align: center;
   color: var(--text-dim);
   font-size: 0.85rem;
+}
+
+/* 3D Museum — the one deliberate exception to the site's chrome. Immersion
+   is the whole reason this route exists, so the canvas covers the viewport
+   and overlays the header/footer rather than being boxed inside them. It
+   overlays rather than using the Fullscreen API, which needs a user gesture
+   and misbehaves on iOS Safari. The museum-exit control and Esc are the way
+   back out; nothing else here may remove them. */
+.museum {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.museum-stage {
+  height: 100%;
+  width: 100%;
+}
+
+.museum-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.museum-loading,
+.museum-fallback {
+  height: min(50vh, 420px);
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-dim);
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.museum-hud {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.museum-hud > * {
+  pointer-events: auto;
+}
+
+.museum-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(180deg, rgba(6, 5, 4, 0.88), rgba(6, 5, 4, 0));
+}
+
+.museum-brand {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: bold;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* The only way back to the site from a full-viewport canvas, so it stays
+   legible against both skins and never collapses to an icon on mobile. */
+.museum-exit {
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(12, 10, 8, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.museum-exit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.museum-exit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.museum-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.museum-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.museum-ctrl-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.museum-seg {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(12, 10, 8, 0.82);
+}
+
+.museum-seg button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.museum-seg button + button {
+  border-left: 1px solid var(--border);
+}
+
+.museum-seg button[aria-pressed='true'] {
+  background: var(--accent);
+  color: #140f06;
+}
+
+.museum-plaque {
+  left: 1rem;
+  bottom: 1rem;
+  max-width: min(340px, 60vw);
+  border-left: 2px solid var(--accent);
+  padding: 0.1rem 0 0.1rem 0.75rem;
+}
+
+.museum-plaque-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.museum-plaque-meta {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.2rem;
+}
+
+.museum-rail {
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.museum-arrow {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(12, 10, 8, 0.85);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.museum-arrow:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.museum-pos {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  min-width: 3.2rem;
+  text-align: center;
+}
+
+.museum-hint {
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 1.1rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  background: rgba(6, 5, 4, 0.7);
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.museum-tap-zones {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  pointer-events: none;
+}
+
+.museum-tap-zone {
+  flex: 1;
+  border-right: 1px dashed rgba(212, 162, 78, 0.25);
+  animation: museum-zone-fade 2.5s ease forwards;
+}
+
+.museum-tap-zone.right {
+  border-right: none;
+}
+
+@keyframes museum-zone-fade {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.museum-card {
+  position: absolute;
+  z-index: 8;
+  inset: auto 0 0 0;
+  transform: translateY(101%);
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+  background: linear-gradient(180deg, rgba(23, 20, 16, 0.97), rgba(11, 10, 8, 0.99));
+  border-top: 1px solid var(--border);
+  padding: 1rem 1rem 1.25rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.museum-card.open {
+  transform: translateY(0);
+}
+
+.museum-card-swatch {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 4px;
+  border: 2px solid var(--frame-gold);
+  background-size: cover;
+  background-position: center;
+  flex: none;
+}
+
+.museum-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.museum-card-body h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.museum-card-body p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.museum-card-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  font-size: 1.3rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.museum-card-close:hover {
+  color: var(--text);
+}
+
+/* Matrix skin recolors the museum's own chrome */
+.museum[data-skin='matrix'] .museum-brand,
+.museum[data-skin='matrix'] .museum-plaque-name {
+  font-family: ui-monospace, monospace;
+}
+.museum[data-skin='matrix'] .museum-ctrl-label,
+.museum[data-skin='matrix'] .museum-plaque,
+.museum[data-skin='matrix'] .museum-arrow:hover,
+.museum[data-skin='matrix'] .museum-exit:hover,
+.museum[data-skin='matrix'] .museum-seg button[aria-pressed='true'] {
+  --accent: #3ad6a6;
+}
+.museum[data-skin='matrix'] .museum-plaque {
+  border-left-color: #3ad6a6;
+}
+.museum[data-skin='matrix'] .museum-seg button[aria-pressed='true'] {
+  background: #3ad6a6;
+  color: #04070a;
+}
+
+@media (max-width: 640px) {
+  .museum-hint {
+    display: none;
+  }
+  .museum-plaque {
+    max-width: 70vw;
+  }
 }
