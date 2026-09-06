@@ -10,6 +10,7 @@ import { layout as buildLayout } from '../lib/museum/layout.js';
 import { skins, defaultSkinId } from '../lib/museum/skins/index.js';
 import { createRailControls } from '../lib/museum/controls/rail.js';
 import { createWalkControls, WALK_MIN_VIEWPORT_WIDTH } from '../lib/museum/controls/walk.js';
+import { getQuality } from '../lib/museum/quality.js';
 
 // Board planes more than this many facing-pairs from the active one stay
 // untextured — a slot a couple of pairs away won't be crisp on screen
@@ -46,14 +47,39 @@ function disposeRoom(world) {
   world.boards = [];
 }
 
-function buildRoom(world, layoutResult, skin) {
+// Skins build a fixed pool of lights plus an anchor per slot. Each frame the
+// pool is reassigned to the anchors nearest the camera, so a room of any size
+// costs the same to light and the visitor always stands in the lit part of it.
+// The pool's SIZE never changes: three.js recompiles every material when the
+// light count changes, which stalls visibly.
+const anchorScratch = [];
+function moveLightsToNearestAnchors(world) {
+  const rig = world.lightRig;
+  const anchors = rig?.anchors;
+  if (!rig?.lights?.length || !anchors?.length) return;
+  if (anchors.length <= rig.lights.length) return; // pool already covers every slot
+
+  const cam = world.camera.position;
+  anchorScratch.length = 0;
+  for (let i = 0; i < anchors.length; i++) {
+    const a = anchors[i];
+    anchorScratch.push({ a, d: (cam.x - a[0]) ** 2 + (cam.z - a[2]) ** 2 });
+  }
+  anchorScratch.sort((p, q) => p.d - q.d);
+  for (let i = 0; i < rig.lights.length; i++) {
+    const a = anchorScratch[i].a;
+    rig.lights[i].l.position.set(a[0], a[1], a[2]);
+  }
+}
+
+function buildRoom(world, layoutResult, skin, quality) {
   disposeRoom(world);
   world.root = new THREE.Group();
   world.scene.add(world.root);
   world.scene.background = new THREE.Color(skin.bg);
   world.scene.fog = new THREE.Fog(skin.fog.color, skin.fog.near, skin.fog.far);
 
-  world.lightRig = skin.build(layoutResult, world.root);
+  world.lightRig = skin.build(layoutResult, world.root, quality);
 
   for (const slot of layoutResult.slots) {
     const group = new THREE.Group();
@@ -209,8 +235,9 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
   useEffect(() => {
     if (webglOK !== true) return;
     const mount = mountRef.current;
+    const quality = getQuality();
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, quality.pixelRatio));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
@@ -226,6 +253,7 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
       boards: [],
       controls: null,
       lightRig: null,
+      quality,
       layoutResult: null,
       skin: null,
       textureLoader: new THREE.TextureLoader(),
@@ -259,6 +287,7 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
         // It gets the scene so it can drive fog and background too, which
         // aren't reachable from the root group it built into.
         world.lightRig?.update?.(dt, now / 1000, world.scene);
+        moveLightsToNearestAnchors(world);
         if (world.lightRig?.flicker) {
           const tt = now * 0.004;
           world.lightRig.lights.forEach((o, i) => {
@@ -309,7 +338,7 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
     world.controls?.dispose();
 
     if (needsRebuild) {
-      buildRoom(world, layoutResult, skin);
+      buildRoom(world, layoutResult, skin, world.quality ?? getQuality());
       world.built = true;
     }
     world.layoutResult = layoutResult;
