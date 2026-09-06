@@ -245,6 +245,33 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [card, zoom]);
 
+  // Hold space to zoom, release to drop back. Double-tap is the deliberate,
+  // stay-open way in; this is the quick look — press, inspect the brushwork,
+  // let go, keep moving. Rail only: walk mode has no notion of a current
+  // piece, since the visitor points the camera themselves.
+  useEffect(() => {
+    if (moveId !== 'rail') return undefined;
+    function onDown(e) {
+      if (e.code !== 'Space' && e.key !== ' ') return;
+      if (e.repeat) return; // holding must not re-fire every frame
+      if (e.target?.closest && e.target.closest('input, textarea, select, button')) return;
+      e.preventDefault(); // space would otherwise scroll the page behind
+      const world = worldRef.current;
+      const slot = world?.layoutResult?.slots?.[world.controls?.getCursor?.() ?? 0];
+      if (slot?.board) setZoom(slot);
+    }
+    function onUp(e) {
+      if (e.code !== 'Space' && e.key !== ' ') return;
+      setZoom(undefined);
+    }
+    window.addEventListener('keydown', onDown);
+    window.addEventListener('keyup', onUp);
+    return () => {
+      window.removeEventListener('keydown', onDown);
+      window.removeEventListener('keyup', onUp);
+    };
+  }, [moveId]);
+
   // Renderer + scene: created once WebGL is confirmed available, torn
   // down on unmount. Room/skin/control changes below reuse this world.
   useEffect(() => {
