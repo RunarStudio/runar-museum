@@ -15,7 +15,12 @@ import { getQuality } from '../lib/museum/quality.js';
 // Board planes more than this many facing-pairs from the active one stay
 // untextured — a slot a couple of pairs away won't be crisp on screen
 // anyway, and it keeps a big room from loading every photo on entry.
-const TEXTURE_LOAD_RADIUS = 2;
+const TEXTURE_LOAD_RADIUS = 3;
+// Textures are dropped only well outside the radius that loads them. With a
+// single threshold, a board sitting exactly on the boundary loads and unloads
+// as the camera glides, which reads as a picture flickering into something
+// else mid-transition.
+const TEXTURE_KEEP_RADIUS = 6;
 const BOARD_HEIGHT = 1.45;
 
 function hasWebGL() {
@@ -139,7 +144,9 @@ function updateTextures(world, skin, moveId, layoutResult) {
   for (const b of world.boards) {
     if (!b.slot.board) continue; // padding boards never get a texture
     const pairIndex = Math.floor(b.slot.i / 2);
-    const inRange = Math.abs(pairIndex - active) <= TEXTURE_LOAD_RADIUS;
+    const distance = Math.abs(pairIndex - active);
+    const inRange = distance <= TEXTURE_LOAD_RADIUS;
+    const keep = distance <= TEXTURE_KEEP_RADIUS;
 
     if (inRange && !b.loaded && !b.loading) {
       b.loading = true;
@@ -157,7 +164,7 @@ function updateTextures(world, skin, moveId, layoutResult) {
         b.texture = tex;
         b.loaded = true;
       });
-    } else if (!inRange && b.loaded) {
+    } else if (!keep && b.loaded) {
       b.texture?.dispose();
       disposeMaterial(b.mesh.material);
       b.mesh.material = new THREE.MeshStandardMaterial({ color: skin.emptyColor, roughness: 0.95 });
@@ -182,6 +189,10 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
   const [narrow, setNarrow] = useState(false);
   const [card, setCard] = useState(undefined); // undefined = closed, slot object = open
   const [zonesVisible, setZonesVisible] = useState(false);
+  // Double-tap/double-click opens the full-resolution photo over the canvas.
+  // The 3D board carries a downscaled texture on purpose; this is how a
+  // visitor actually inspects brushwork.
+  const [zoom, setZoom] = useState(undefined);
   const [cursorPos, setCursorPos] = useState(0);
   const [hud, setHud] = useState({ n: 0, boardCount: 0, miniCount: 0, roomName: '' });
 
@@ -222,13 +233,17 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
   useEffect(() => {
     function onKey(e) {
       if (e.key !== 'Escape') return;
+      if (zoom !== undefined) {
+        setZoom(undefined);
+        return;
+      }
       if (card !== undefined) return;
       if (e.target?.closest && e.target.closest('input, textarea, select')) return;
       exitMuseum();
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [card]);
+  }, [card, zoom]);
 
   // Renderer + scene: created once WebGL is confirmed available, torn
   // down on unmount. Room/skin/control changes below reuse this world.
@@ -356,6 +371,7 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
             onOpenCard: (slot) => setCard(slot),
             onCloseCard: () => setCard(undefined),
             onTapZonesVisible: setZonesVisible,
+            onZoom: (slot) => setZoom(slot),
           });
     if (moveId === 'rail') controls.setPickables(world.boards.map((b) => ({ mesh: b.mesh, slot: b.slot })));
     if (prevPose) controls.adoptPose(prevPose);
@@ -468,6 +484,19 @@ export default function Museum({ rooms, boardsByRoom, initialRoomSlug }) {
           <div className="museum-tap-zone left" />
           <div className="museum-tap-zone center" />
           <div className="museum-tap-zone right" />
+        </div>
+      )}
+
+      {zoom !== undefined && (
+        <div className="museum-zoom" role="dialog" aria-modal="true" onClick={() => setZoom(undefined)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={asset(zoom.board.src)} alt={zoom.board.miniName} />
+          <div className="museum-zoom-bar">
+            <span>{zoom.board.miniName}</span>
+            <button onClick={() => setZoom(undefined)} aria-label={t('close')}>
+              {t('close')}
+            </button>
+          </div>
         </div>
       )}
 

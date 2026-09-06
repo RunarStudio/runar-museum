@@ -1501,3 +1501,57 @@ body::after {
     max-width: 70vw;
   }
 }
+
+/* Full-resolution artwork, opened by double-click or double-tap. The 3D
+   board deliberately carries a downscaled texture; this is where a visitor
+   actually inspects brushwork, so it uses the original file. */
+.museum-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(4, 3, 2, 0.94);
+  cursor: zoom-out;
+}
+
+.museum-zoom img {
+  max-width: 100%;
+  max-height: calc(100% - 4rem);
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 10px 60px rgba(0, 0, 0, 0.8);
+}
+
+.museum-zoom-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  font-family: sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.museum-zoom-bar button {
+  font: inherit;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(12, 10, 8, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.museum-zoom-bar button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
