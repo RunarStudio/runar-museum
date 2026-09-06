@@ -10,3 +10,7 @@ out/
 # Claude Code local state (worktrees are checkouts, not source)
 .claude/
 AGENTS.md
+
+# Playwright verification screenshots
+.playwright-mcp/
+*.png
